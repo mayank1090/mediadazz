@@ -1,15 +1,36 @@
 @import "tailwindcss";
 
+/* Ensure Swiper containers and slides stretch to parent's height */
+.swiper,
+.swiper-wrapper,
+.swiper-slide {
+  height: 100%;
+}
+
+@theme {
+
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --brand: #F0682F;
+  --brand-50: #FFEAE180;
+  --brand-100: #ffd7c7;
+  --border-color:#EEEEEE;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand: var(--brand);
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-satoshi: var(--font-satoshi);
+  --border-color:var(--border-color);
+  --font-epilogue: var(--font-epilogue)
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,9 +39,9 @@
     --foreground: #ededed;
   }
 }
+/* 
+Prevent global horizontal scrollbars caused by edge cases
+html, body {
+  overflow-x: hidden;
+} */
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
