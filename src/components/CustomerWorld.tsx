@@ -18,7 +18,7 @@ export default function CustomerWorld (){
                 </div>
                 <p className="font-satoshi lg:text-right lg:max-w-[45%] xl:max-w-[36%] font-medium text-base text-[#6B7280]">Connect with top media spaces across Dubai and the UAE, and grow your brand visibility faster and better with MediaDazz.</p>
             </div>
-            <div className="mt-8 lg:mt-12 xl:mt-16 grid sm:grid-cols-2 md:flex md:justify-between gap-3.5 md:gap-12 lg:gap-24 xl:gap-40">
+            <div className="mt-8 lg:mt-12 xl:mt-16 grid sm:grid-cols-2 md:flex md:justify-between gap-3.5 md:gap-12 lg:gap-20 xl:gap-40">
                 <div className="py-2.5 md:bg-white md:py-0 flex justify-center gap-0.5 bg-[#FAFAFA] rounded-lg">
                    <Image src={companyone} className="max-w-[35%] md:max-w-full mx-auto" alt="company"/>
                 </div>

@@ -11,6 +11,7 @@
     "analyze": "ANALYZE=true next build"
   },
   "dependencies": {
+    "critters": "^0.0.25",
     "next": "15.5.2",
     "react": "19.1.0",
     "react-country-flag": "^3.1.0",
