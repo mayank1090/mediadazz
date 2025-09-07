@@ -45,7 +45,7 @@ export default function HeroCarousel() {
   return (
     <section
       aria-label="Featured marketing messages"
-      className=" w-full px-6 py-[3.375rem] md:py-16 lg:py-[5.25rem]  bg-white flex justify-between items-center"
+      className=" w-full mt-[5.5rem] lg:mt-28 px-6 py-[3.375rem] md:py-16 lg:py-[5.25rem]  bg-white flex justify-between items-center"
     >
       <div className="mx-auto w-full max-w-3xl">
 

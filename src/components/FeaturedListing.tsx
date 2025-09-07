@@ -14,7 +14,7 @@ export default function FeatureListing (){
         <h2 className="font-satoshi mt-2.5 font-bold text-[2rem] lg:text-4xl xl:text-5xl leading-[2.625rem]">Featured Listings in Dubai</h2>
         <p className="font-satoshi lg:text-xl xl:text-[1.375rem] font-medium text-base text-[#6B7280]">Top-performing ad spaces, handpicked to give your brand maximum visibility</p>
         </div>
-     <div className="md:grid grid-cols-2 lg:flex lg:overflow-x-scroll gap-3.5 lg:gap-6 lg:mt-16 lg:last:mr-6">
+     <div className="md:grid grid-cols-2 lg:flex lg:overflow-x-scroll  no-scrollbar gap-3.5 lg:gap-6 lg:mt-16 lg:last:mr-6">
         <div className="mt-14 lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden lg:min-w-[320px] xl:min-w-[404px]">
             <div className="w-full max-h-[314px] relative overflow-hidden ">
             <Image src={first} alt="Featured listing" className="w-full h-full max-h-full object-cover object-center" />

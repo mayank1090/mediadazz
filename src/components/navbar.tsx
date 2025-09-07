@@ -63,7 +63,7 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
 	};
 
 	return (
-		<header className="sticky top-0 z-50 bg-white overflow-x-clip">
+		<header className="fixed w-full top-0 z-50 bg-white overflow-x-clip">
 			<nav aria-label="Primary" className="mx-auto max-w-[1330px] p-6 lg:px-6 xl:px-8 lg:py-8">
 				<div className="flex h-10 lg:h-12 items-center justify-between">
                     <div className="flex items-center gap-[14px] max-w-[50%]">

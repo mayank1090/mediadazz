@@ -48,25 +48,25 @@ export default function Footer (){
             <div className="grid grid-cols-2 gap-16 lg:gap-[5.25rem]">
                 <div className="space-y-[1.125rem] lg:space-y-6">
                     <h4 className="font-medium font-satoshi text-xs lg:text-base text-white uppercase">Categories</h4>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Outdoor & OOH Media</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Print Media</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">FM Radio</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">TV Channels</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Social Media</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Events</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">PR</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Direct</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Outdoor & OOH Media</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Print Media</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">FM Radio</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">TV Channels</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Social Media</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Events</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">PR</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Direct</p>
                 </div>
                 <div className="space-y-[1.125rem] lg:space-y-6">
                 <h4 className="font-medium font-satoshi text-xs lg:text-base text-white uppercase">GET TO KNOW US</h4>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Privacy Policy</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Help Center</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Blogs</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Benefits</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">FAQs</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Careers</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Login</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base">Sign Up</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer  ">Privacy Policy</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Help Center</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Blogs</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Benefits</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">FAQs</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Careers</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Login</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Sign Up</p>
                 </div>
             </div>
 
@@ -78,8 +78,8 @@ export default function Footer (){
             <div className="pt-6 lg:pt-8 mt-7 lg:mt-9 border-t border-[#FFFFFF26] flex flex-col md:flex-row gap-[1.125rem] justify-between">
                 <h5 className="text-xs lg:text-sm text-[#6B7280] font-satoshi">©2025 – MediaDazz.com. All Rights Reserved.</h5>
                 <div className="flex justify-between gap-2 md:justify-baseline md:gap-28">
-                <h5 className="text-xs lg:text-sm text-[#6B7280] font-satoshi">Term and Conditions</h5>
-                <h5 className="text-xs lg:text-sm text-[#6B7280] font-satoshi">Privacy Policy</h5>
+                <h5 className="text-xs lg:text-sm text-[#6B7280] font-satoshi cursor-pointer">Term and Conditions</h5>
+                <h5 className="text-xs lg:text-sm text-[#6B7280] font-satoshi cursor-pointer">Privacy Policy</h5>
                 </div>
             </div>
     </div>

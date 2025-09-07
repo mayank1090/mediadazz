@@ -10,15 +10,24 @@ import PR from "../../public/PR.svg";
 import direct from "../../public/direct.svg";
 import Image from "next/image";
 
+import outdoorb from "../../public/outdoorb.svg";
+import printmediab from "../../public/printmediab.svg";
+import FMb from "../../public/FMb.svg";
+import TVb from "../../public/TVb.svg";
+import socialb from "../../public/socialmediab.svg";
+import eventb from "../../public/eventb.svg";
+import PRb from "../../public/PRb.svg";
+import directb from "../../public/directb.svg";
+
 const channels = [
-  { id: 1, label: "Outdoor & OOH Media", icon: outdoor },
-  { id: 2, label: "Print Media", icon: printmedia },
-  { id: 3, label: "FM Radio", icon: FM },
-  { id: 4, label: "TV Channel", icon: TV },
-  { id: 5, label: "Social Media", icon: social },
-  { id: 6, label: "Events", icon: event },
-  { id: 7, label: "PR", icon: PR },
-  { id: 8, label: "Direct", icon: direct },
+  { id: 1, label: "Outdoor & OOH Media", icon: outdoor , desktopicon:outdoorb},
+  { id: 2, label: "Print Media", icon: printmedia , desktopicon:printmediab },
+  { id: 3, label: "FM Radio", icon: FM ,desktopicon:FMb},
+  { id: 4, label: "TV Channel", icon: TV,desktopicon:TVb },
+  { id: 5, label: "Social Media", icon: social, desktopicon:socialb },
+  { id: 6, label: "Events", icon: event, desktopicon:eventb },
+  { id: 7, label: "PR", icon: PR , desktopicon:PRb},
+  { id: 8, label: "Direct", icon: direct ,desktopicon:directb},
 ];
 
 export default function MediaChannels() {
@@ -52,13 +61,13 @@ export default function MediaChannels() {
 
       {/* Desktop Layout (horizontal row) */}
       <div className="hidden md:flex items-start justify-between gap-4 lg:gap-8">
-        {channels.map(({ id, label, icon }) => (
+        {channels.map(({ id, label, icon, desktopicon }) => (
           <div
             key={id}
             className="flex flex-1  flex-col items-center text-center"
           >
             <div className="rounded-[0.625rem] w-full flex justify-center bg-[#F9F9F9] md:py-6 lg:py-7  xl:py-9">
-              <Image alt="logo" src={icon} className="w-6 h-6 lg:w-8 lg:h-8 xl:h-10 xl:w-10 text-black " aria-hidden="true" />
+              <Image alt="logo" src={desktopicon} className="w-6 h-6 lg:w-8 lg:h-8 xl:h-10 xl:w-10 text-black " aria-hidden="true" />
             </div>
             <p className="mt-3 lg:mt-[1.125rem] text-base lg:text-lg xl:text-xl font-medium font-satoshi">
               {label}
