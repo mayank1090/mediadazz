@@ -1,6 +1,3 @@
-import Image from "next/image";
-import SidebarMegaMenu from "@/components/navbar";
-import { menuData } from "@/data/menusData";
 import dynamic from "next/dynamic";
 import CustomerWorld from "@/components/CustomerWorld";
 import FeatureListing from "@/components/FeaturedListing";
@@ -9,7 +6,7 @@ import MediaAdvantage from "@/components/MediaAdvantage";
 import FAQ from "@/components/FAQ";
 import Blogs from "@/components/Blogs";
 import Campaigns from "@/components/Campaigns";
-import Footer from "@/components/Footer";
+import Planyourcampaign from "@/components/Planyourcampaign";
 
 const HeroCarousel = dynamic(() => import("@/components/HeroCarousel"), {
   ssr: true,
@@ -26,13 +23,13 @@ const MediaServices = dynamic(
 export default function Home() {
   return (
   <div className="w-full !overflow-x-hidden min-h-screen overflow-y-auto">
-    <SidebarMegaMenu
-			topLevels={menuData}
-			loginHref="/login"
-			cartHref="/cart"
-		/>
+    <div className="lg:h-screen lg:min-h-[41rem] lg:overflow-y-hidden lg:flex lg:flex-col">
+    <div className="lg:flex-1 flex">
+     <HeroCarousel />
+     </div>
+    </div>
     <div className="">
-    <HeroCarousel />
+   
     <BillboardCarousel />
     <MediaServices />
     <CustomerWorld/>
@@ -40,9 +37,9 @@ export default function Home() {
     <MarketersSection/>
     <MediaAdvantage/>
     <FAQ/>
+    <Planyourcampaign/>
     <Blogs/>
     <Campaigns/>
-    <Footer/>
     </div>
   </div>
   );

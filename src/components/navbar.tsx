@@ -4,23 +4,70 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FiMenu, FiX, FiChevronDown, FiShoppingCart, FiChevronRight } from 'react-icons/fi';
+import { FiMenu, FiX, FiChevronDown, FiShoppingCart, FiChevronRight, FiUser, FiHeart, FiLogOut } from 'react-icons/fi';
 import CountrySelector from './CountrySelector';
+import LoginModal from './LoginModal';
 import { MenuItem, MenuSection, TopLevel } from '../types/navbar';
 import NavLogo from '../images/navlogo';
 import Dummyuser from '../../public/Dummyuser.png';
 import cart from "../../public/cart.svg";
 
 type Props = {
-	topLevels: TopLevel[];
 	loginHref?: string;
 	cartHref?: string;
 };
 
-export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartHref = '/cart' }: Props) {
+export default function SidebarMegaMenu({ loginHref = '/login', cartHref = '/cart' }: Props) {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [clickedIndex, setClickedIndex] = useState<number | null>(null);
+	const [topLevels, setTopLevels] = useState<TopLevel[]>([]);
+	const [loginModalOpen, setLoginModalOpen] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 	const drawerRef = useRef<HTMLDivElement>(null);
+	const profileRef = useRef<HTMLDivElement>(null);
+
+	console.log(topLevels);
+
+	// Check user login status from localStorage
+	useEffect(() => {
+		const checkLoginStatus = () => {
+			const userActive = localStorage.getItem('useractive');
+			setIsLoggedIn(userActive === 'true');
+		};
+
+		checkLoginStatus();
+		
+		// Listen for storage changes (when user logs in/out in another tab)
+		window.addEventListener('storage', checkLoginStatus);
+		
+		// Listen for custom login status change events (from same tab)
+		const handleLoginStatusChange = (event: CustomEvent) => {
+			setIsLoggedIn(event.detail.isLoggedIn);
+		};
+		
+		window.addEventListener('userLoginStatusChanged', handleLoginStatusChange as EventListener);
+		
+		return () => {
+			window.removeEventListener('storage', checkLoginStatus);
+			window.removeEventListener('userLoginStatusChanged', handleLoginStatusChange as EventListener);
+		};
+	}, []);
+
+	useEffect(() => {
+		// Fetch data from API
+		const fetchCategories = async () => {
+			const response = await fetch('https://mediadazz.com/api/getCategoryList');
+			const data = await response.json();
+			console.log(data);
+			if (data.status === 'success') {
+				setTopLevels(data.data); // Set the API response to the state
+			} else {
+				console.error('Failed to fetch categories');
+			}
+		};
+		fetchCategories();
+	}, []);
 
 	useEffect(() => {
 		function onKey(e: KeyboardEvent) {
@@ -48,11 +95,18 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
 					setClickedIndex(null);
 				}
 			}
+			
+			if (profileDropdownOpen) {
+				const target = event.target as HTMLElement;
+				if (!target.closest('.profile-dropdown-container')) {
+					setProfileDropdownOpen(false);
+				}
+			}
 		};
 
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => document.removeEventListener('mousedown', handleClickOutside);
-	}, [clickedIndex]);
+	}, [clickedIndex, profileDropdownOpen]);
 
 	const handleMenuClick = (index: number) => {
 		if (clickedIndex === index) {
@@ -61,6 +115,21 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
 			setClickedIndex(index);
 		}
 	};
+
+	const handleLogout = () => {
+		localStorage.removeItem('useractive');
+		
+		// Dispatch custom event to notify other components of logout
+		window.dispatchEvent(new CustomEvent('userLoginStatusChanged', {
+			detail: { isLoggedIn: false }
+		}));
+		
+		setIsLoggedIn(false);
+		setProfileDropdownOpen(false);
+		// You can add additional logout logic here (API calls, redirects, etc.)
+	};
+
+	const displayedCategories = topLevels.slice(0, 5);
 
 	return (
 		<header className="fixed w-full top-0 z-50 bg-white overflow-x-clip">
@@ -86,7 +155,7 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
 
 					<ul className="hidden lg:flex lg:relative items-center gap-4 xl:gap-8">
 						
-						{topLevels.map((t, i) => (
+						{displayedCategories.map((t, i) => (
 							<li
 								key={t.label}
 								className=" mega-menu-container"
@@ -143,12 +212,53 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
 						>
 							< Image src={cart} alt='cart' className=" h-5 w-5 md:h-6 md:w-6" />
 						</Link>
-						<Link
-							href={loginHref}
-							className="hidden lg:inline-flex text-lg font-bold font-satoshi h-12 px-[1.125rem] items-center rounded-lg bg-brand-50 text-brand hover:bg-brand-100"
-						>
-							Log in
-						</Link>
+						
+						{!isLoggedIn ? (
+							<button
+								onClick={() => setLoginModalOpen(true)}
+								className="hidden lg:inline-flex text-lg font-bold font-satoshi h-12 px-[1.125rem] items-center rounded-lg bg-brand-50 text-brand hover:bg-brand-100"
+							>
+								Log in
+							</button>
+						) : (
+							<div className="hidden lg:block profile-dropdown-container relative">
+								<button
+									onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+									className="inline-flex h-12 :w-12 items-center justify-center rounded-full"
+									aria-label="User Profile"
+								>
+									<Image src={Dummyuser} alt='User Profile'  className="rounded-full h-full w-full" />
+								</button>
+								
+								{profileDropdownOpen && (
+									<div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg border border-[#EEEEEE] shadow-[0px_4px_24px_0px_rgba(0,0,0,0.1)] p-1 z-50">
+										<Link
+											href="/profile"
+											className="flex items-center gap-2.5 px-[0.875rem] py-3 text-base font-medium "
+											onClick={() => setProfileDropdownOpen(false)}
+										>
+											<FiUser className="h-5 w-5" />
+											Personal Details
+										</Link>
+										<Link
+											href="/wishlist"
+											className="flex items-center gap-2.5 px-[0.875rem] py-3 text-base font-medium "
+											onClick={() => setProfileDropdownOpen(false)}
+										>
+											<FiHeart className="h-5 w-5" />
+											Wishlist
+										</Link>
+										<button
+											onClick={handleLogout}
+											className="flex items-center gap-2.5 px-[0.875rem] py-3 text-base font-medium "
+										>
+											<FiLogOut className="h-5 w-5" />
+											Logout
+										</button>
+									</div>
+								)}
+							</div>
+						)}
 					</div>
 					</div>
 				</div>
@@ -184,19 +294,62 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
                             </div>
 							
 						</div>
-                        <div className="px-3.5 py-3 mt-8 border-[#EEEEEE] flex items-center justify-between border rounded-lg">
-                            <div className="flex items-center gap-2">
-                            <Image src={Dummyuser} alt='Dummyuser' width={36} height={36} />
-                                <span className="text-base font-medium font-satoshi text-black">My Account</span>
-                            </div>
+                        {!isLoggedIn ? (
+                            <button 
+                                onClick={() => setLoginModalOpen(true)}
+                                className="px-3.5 py-3 mt-8 border-[#EEEEEE] flex items-center justify-between border rounded-lg w-full hover:bg-gray-50"
+                            >
+                                <div className="flex items-center gap-2">
+                                <Image src={Dummyuser} alt='Dummyuser' width={36} height={36} />
+                                    <span className="text-base font-medium font-satoshi text-black">My Account</span>
+                                </div>
 
-                            <FiChevronRight className="h-6 w-6 text-black" />
-                            
-                        </div>
+                                <FiChevronRight className="h-6 w-6 text-black" />
+                                
+                            </button>
+                        ) : (
+                            <div className="mt-8">
+                                <div className="px-3.5 py-3 border-[#EEEEEE] border rounded-lg bg-gray-50">
+                                    <div className="flex items-center gap-2">
+                                        <Image src={Dummyuser} alt='User Profile' width={36} height={36} className="rounded-full" />
+                                        <span className="text-base font-medium font-satoshi text-black">My Account</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-3 space-y-2">
+                                    <Link
+                                        href="/profile"
+                                        className="flex items-center gap-3 px-3.5 py-3 text-sm text-neutral-800 hover:bg-gray-50 rounded-lg"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
+                                        <FiUser className="h-4 w-4" />
+                                        Personal Details
+                                    </Link>
+                                    <Link
+                                        href="/wishlist"
+                                        className="flex items-center gap-3 px-3.5 py-3 text-sm text-neutral-800 hover:bg-gray-50 rounded-lg"
+                                        onClick={() => setMobileOpen(false)}
+                                    >
+                                        <FiHeart className="h-4 w-4" />
+                                        Wishlist
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            handleLogout();
+                                            setMobileOpen(false);
+                                        }}
+                                        className="flex items-center gap-3 px-3.5 py-3 text-sm text-neutral-800 hover:bg-gray-50 rounded-lg w-full text-left"
+                                    >
+                                        <FiLogOut className="h-4 w-4" />
+                                        Logout
+                                    </button>
+                                </div>
+                            </div>
+                        )}
 
 						<div className="overflow-y-auto flex flex-col justify-between flex-grow max-h-[calc(100vh-100px)]">
 							<div className="">
-							{topLevels.map((t, index) => (
+							{topLevels?.map((t, index) => (
 								<details key={index} className="group border rounded-lg overflow-hidden  mt-3.5">
 									<summary className="flex cursor-pointer list-none  px-3.5 py-4 bg-[#FAFAFA] border-[#EEEEEE] items-center justify-between text-neutral-900">
 										<span className="font-medium font-satoshi text-base">{t.label}</span>
@@ -205,7 +358,7 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
                                         
 									</summary>
 
-									{t.sections.map((sec, index) => (
+									{t?.sections?.map((sec, index) => (
 										<div key={index} className="mt-6 px-3.5 bg-white last:mb-6">
 											<h3 className="text-[11px] font-semibold tracking-wide text-brand uppercase mb-2">{
 												sec.heading
@@ -235,6 +388,12 @@ export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartH
 					</div>
 				</>
 			)}
+			
+			{/* Login Modal */}
+			<LoginModal 
+				isOpen={loginModalOpen} 
+				onClose={() => setLoginModalOpen(false)} 
+			/>
 		</header>
 	);
 }

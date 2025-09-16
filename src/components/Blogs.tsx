@@ -12,7 +12,7 @@ export default function Blogs (){
                 <h3 className="font-satoshi font-bold text-sm text-brand">FEATURED POSTS</h3>
                 <h2 className="font-satoshi mt-3.5 font-bold text-[2rem] lg:text-4xl xl:text-5xl xl:leading-14 leading-[2.625rem]">Stay inform with the latest</h2>
             </div>
-            <button className="px-[1.125rem] hidden lg:block py-3.5 bg-brand font-satoshi rounded-lg text-lg font-bold text-white">View all Posts</button>
+            <button className="px-[1.125rem] hidden lg:block py-3.5 bg-brand font-satoshi rounded-lg text-lg font-bold text-white hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform">View all Posts</button>
         </div>
         <div className="mt-[2.625rem] md:mt-12 lg:mt-16 lg:flex lg:gap-6">
             <div className="rounded-tr-2xl flex-1 lg:flex flex-col rounded-tl-2xl overflow-hidden hidden">

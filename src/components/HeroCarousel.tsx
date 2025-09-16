@@ -45,14 +45,14 @@ export default function HeroCarousel() {
   return (
     <section
       aria-label="Featured marketing messages"
-      className=" w-full mt-[5.5rem] lg:mt-28 px-6 py-[3.375rem] md:py-16 lg:py-[5.25rem]  bg-white flex justify-between items-center"
+      className=" w-full mt-[5.5rem] lg:mt-28 px-6 py-[3.375rem] md:py-16 lg:py-6 lg:flex-1 lg:flex lg:justify-between lg:items-center  bg-white flex justify-between items-center"
     >
       <div className="mx-auto w-full max-w-3xl">
 
-        <div className="bg-[#6155F513] py-3.5 px-[1.125rem]  rounded-[3.5rem] mx-auto mb-8 flex gap-2.5 w-fit ">
+        {/* <div className="bg-[#6155F513] py-3.5 px-[1.125rem]  rounded-[3.5rem] mx-auto mb-8 flex gap-2.5 w-fit ">
           <LuMedal className="text-[#6155F5] h-[1.125rem] w-[1.125rem] md:h-6 md:w-6"/>
           <h3 className="text-[#6155F5] whitespace-nowrap font-bold text-sm md:text-lg font-satoshi">ADVERTISING SOLUTION</h3>
-        </div>
+        </div> */}
         <Swiper
           modules={[Autoplay, Pagination, A11y]}
           autoplay={{ delay: 2000, disableOnInteraction: false }}
@@ -99,7 +99,7 @@ export default function HeroCarousel() {
                     </div>
                     <button
                       type="submit"
-                      className="rounded-xl hidden md:block whitespace-nowrap font-satoshi bg-brand px-5 py-[1.125rem] text-pretty text-xl font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="rounded-xl hidden md:block whitespace-nowrap font-satoshi bg-brand px-5 py-[1.125rem] text-pretty text-xl font-medium text-white md:shadow-sm hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform"
                     >
                       View all Places
                     </button>

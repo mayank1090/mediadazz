@@ -9,7 +9,7 @@ interface FAQItem {
   answer: string;
 }
 
-const faqData: FAQItem[] = [
+export const faqData: FAQItem[] = [
   {
     id: 1,
     question: "What is MediaDazz?",
