@@ -28,7 +28,7 @@ export default function Footer (){
                 <div className="mt-9 lg:mt-12 flex gap-6 lg:gap-8">
                     <div className="">
                         <h2 className="font-satoshi text-xs text-white font-medium md:text-sm lg:text-base">FOR Marketers</h2>
-                        <button className="mt-2.5 lg:mt-3.5 text-sm text-white font-bold lg:text-lg py-2.5 px-3.5 lg:py-4 lg:px-[1.125rem] bg-brand rounded-md lg:rounded-lg">
+                        <button className="mt-2.5 lg:mt-3.5 text-sm text-white font-bold lg:text-lg py-2.5 px-3.5 lg:py-4 lg:px-[1.125rem] bg-brand rounded-md lg:rounded-lg hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform">
                         Get Started
                         </button>
                     </div>

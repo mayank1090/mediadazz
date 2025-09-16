@@ -3,14 +3,19 @@ import camone from "../../public/Camone.svg";
 import camtwo from "../../public/Camtwo.svg";
 import camthree from "../../public/Camthree.svg";
 
-export default function Campaigns (){
+interface CampaignsProps {
+  heading?: string;
+  buttonText?: string;
+}
+
+export default function Campaigns ({ heading = "Turn Ideas Into Impactful Campaigns", buttonText = "Inquire Now" }: CampaignsProps){
     return(<>
         <div className="py-[3.375rem] px-6 lg:px-24 lg:py-[5.25rem] xl:px-[7.75rem]">
           <div className="bg-[#FFEAE180] rounded-[0.625rem] lg:rounded-[0.875rem] p-3 lg:p-3.5">
             <div className="px-[1.375rem] py-[1.875rem] lg:px-[3.25rem] lg:py-14 xl:py-[5.25rem] ">
-                <h3 className="font-bold text-center font-satoshi text-[1.625rem] md:text-4xl leading-8 lg:text-5xl lg:leading-14">Turn Ideas Into Impactful Campaigns</h3>
+                <h3 className="font-bold text-center font-satoshi text-[1.625rem] md:text-4xl leading-8 lg:text-5xl lg:leading-14">{heading}</h3>
                 <p className="font-satoshi text-center font-medium text-[0.625rem] leading-[1.125rem] md:text-sm lg:text-lg mt-2 md:mt-2.5 lg:mt-6">From strategy to placement, MediaDazz helps your brand cut through the noise and reach more customers.</p>
-                <button className="px-[1.125rem] text-white cursor-pointer py-4 bg-brand rounded-lg text-lg font-satoshi font-bold mx-auto w-fit mt-12 lg:block hidden">Inquire Now</button>
+                <button className="px-[1.125rem] text-white cursor-pointer py-4 bg-brand rounded-lg text-lg font-satoshi font-bold mx-auto w-fit mt-12 lg:block hidden hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform">{buttonText}</button>
             </div>
             <div className="flex flex-col lg:flex-row gap-2.5 lg:gap-3.5">
                 <div className="flex-1 bg-[#FFFFFF66] rounded-md lg:rounded-lg p-[1.125rem] md:p-5 lg:p-6 gap-3.5 md:gap-4 lg:gap-5 flex ">
@@ -49,7 +54,7 @@ export default function Campaigns (){
             
             </div>
           </div>
-          <button className="sm:hidden py-[1.125rem] bg-brand rounded-lg font-bold text-lg font-satoshi cursor-pointer text-center w-full mt-6 text-white">Inquire Now</button>
+          <button className="sm:hidden py-[1.125rem] bg-brand rounded-lg font-bold text-lg font-satoshi cursor-pointer text-center w-full mt-6 text-white">{buttonText}</button>
         </div>
     </>)
 }

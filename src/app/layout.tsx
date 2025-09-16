@@ -2,6 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono , Epilogue} from "next/font/google";
 import "./globals.css";
 import Satoshi from "next/font/local";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'leaflet/dist/leaflet.css';
+import SidebarMegaMenu from "@/components/navbar";
+import Footer from "@/components/Footer";
+import { menuData } from "@/data/menusData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -95,7 +101,27 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${epilogue.variable} ${satoshi.variable} antialiased`}
       >
-        {children}
+        <SidebarMegaMenu
+          topLevels={menuData}
+          loginHref="/login"
+          cartHref="/cart"
+        />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <Footer />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </body>
     </html>
   );
