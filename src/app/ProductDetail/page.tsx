@@ -11,7 +11,12 @@ import Insights from '@/components/ProductDetail/insights';
 import BusinessCategory from '@/components/ProductDetail/businesscategory';
 import { PiClockCountdownLight } from "react-icons/pi";
 import Pointstoconsider from '@/components/ProductDetail/pointstoconsider';
-import { Productmap } from '@/components/ProductDetail/productmap';
+import dynamic from 'next/dynamic';
+
+const Productmap = dynamic(
+  () => import('@/components/ProductDetail/productmap').then((mod) => mod.Productmap),
+  { ssr: false }
+);
 import TargetAudience from '@/components/ProductDetail/targetaudience';
 import Marketfriendly from '@/components/ProductDetail/Marketfriendly';
 import { ProductFAQ } from '@/components/ProductDetail/ProductFAQ';
