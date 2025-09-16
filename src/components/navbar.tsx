@@ -13,21 +13,20 @@ import Dummyuser from '../../public/Dummyuser.png';
 import cart from "../../public/cart.svg";
 
 type Props = {
+	topLevels: TopLevel[];
 	loginHref?: string;
 	cartHref?: string;
 };
 
-export default function SidebarMegaMenu({ loginHref = '/login', cartHref = '/cart' }: Props) {
+
+export default function SidebarMegaMenu({ topLevels, loginHref = '/login', cartHref = '/cart' }: Props) {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [clickedIndex, setClickedIndex] = useState<number | null>(null);
-	const [topLevels, setTopLevels] = useState<TopLevel[]>([]);
 	const [loginModalOpen, setLoginModalOpen] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 	const drawerRef = useRef<HTMLDivElement>(null);
 	const profileRef = useRef<HTMLDivElement>(null);
-
-	console.log(topLevels);
 
 	// Check user login status from localStorage
 	useEffect(() => {
@@ -52,21 +51,6 @@ export default function SidebarMegaMenu({ loginHref = '/login', cartHref = '/car
 			window.removeEventListener('storage', checkLoginStatus);
 			window.removeEventListener('userLoginStatusChanged', handleLoginStatusChange as EventListener);
 		};
-	}, []);
-
-	useEffect(() => {
-		// Fetch data from API
-		const fetchCategories = async () => {
-			const response = await fetch('https://mediadazz.com/api/getCategoryList');
-			const data = await response.json();
-			console.log(data);
-			if (data.status === 'success') {
-				setTopLevels(data.data); // Set the API response to the state
-			} else {
-				console.error('Failed to fetch categories');
-			}
-		};
-		fetchCategories();
 	}, []);
 
 	useEffect(() => {
@@ -129,8 +113,6 @@ export default function SidebarMegaMenu({ loginHref = '/login', cartHref = '/car
 		// You can add additional logout logic here (API calls, redirects, etc.)
 	};
 
-	const displayedCategories = topLevels.slice(0, 5);
-
 	return (
 		<header className="fixed w-full top-0 z-50 bg-white overflow-x-clip">
 			<nav aria-label="Primary" className="mx-auto max-w-[1330px] p-6 lg:px-6 xl:px-8 lg:py-8">
@@ -155,7 +137,7 @@ export default function SidebarMegaMenu({ loginHref = '/login', cartHref = '/car
 
 					<ul className="hidden lg:flex lg:relative items-center gap-4 xl:gap-8">
 						
-						{displayedCategories.map((t, i) => (
+					{topLevels.map((t, i) => (
 							<li
 								key={t.label}
 								className=" mega-menu-container"

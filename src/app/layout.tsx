@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
 import SidebarMegaMenu from "@/components/navbar";
 import Footer from "@/components/Footer";
+import { menuData } from "@/data/menusData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -101,6 +102,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${epilogue.variable} ${satoshi.variable} antialiased`}
       >
         <SidebarMegaMenu
+          topLevels={menuData}
           loginHref="/login"
           cartHref="/cart"
         />
