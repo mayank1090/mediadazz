@@ -1,14 +1,19 @@
+"use client";
 import Image from "next/image";
 import first from "../../public/first.svg"
 import { LuUserRound } from "react-icons/lu";
 import { LiaCarSolid } from "react-icons/lia";
 import HeartButton from "./HeartButton";
 import CartButton from "./CartButton";
+import { useRouter } from "next/navigation";
+
 
 const Listingcarousel = () => {
+
+    const router = useRouter();
   return (
     <div className="md:grid grid-cols-2 lg:flex lg:overflow-x-scroll  no-scrollbar gap-3.5 lg:gap-6 lg:mt-16 lg:last:mr-6">
-    <div className="mt-14 lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
+    <div onClick={()=>router.push("/ProductDetail")}  className="mt-14 cursor-pointer lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
         <div className="w-full max-h-[314px] relative overflow-hidden ">
         <Image src={first} alt="Featured listing" className="w-full h-full max-h-full object-cover object-center" />
          <HeartButton itemId="billboard-1" />
@@ -37,7 +42,7 @@ const Listingcarousel = () => {
             <CartButton />
         </div>
     </div>
-    <div className="mt-14 lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
+    <div onClick={()=>router.push("/ProductDetail")} className="mt-14 cursor-pointer lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
         <div className="w-full max-h-[314px] relative overflow-hidden ">
         <Image src={first} alt="Featured listing" className="w-full h-full max-h-full object-cover object-center" />
          <HeartButton itemId="billboard-2" />
@@ -66,7 +71,7 @@ const Listingcarousel = () => {
             <CartButton />
         </div>
     </div>
-    <div className="mt-14 lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px] ">
+    <div onClick={()=>router.push("/ProductDetail")} className="mt-14 cursor-pointer lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px] ">
         <div className="w-full max-h-[314px] relative overflow-hidden ">
         <Image src={first} alt="Featured listing" className="w-full h-full max-h-full object-cover object-center" />
          <HeartButton itemId="billboard-3" />
@@ -95,7 +100,7 @@ const Listingcarousel = () => {
             <CartButton />
         </div>
     </div>
-    <div className="mt-14 lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
+    <div onClick={()=>router.push("/ProductDetail")} className="mt-14 cursor-pointer lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
         <div className="w-full max-h-[314px] relative overflow-hidden ">
         <Image src={first} alt="Featured listing" className="w-full h-full max-h-full object-cover object-center" />
          <HeartButton itemId="billboard-4" />

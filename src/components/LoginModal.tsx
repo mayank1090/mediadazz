@@ -246,8 +246,8 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       
 
       {/* Modal */}
-      <div className="fixed inset-0 flex items-center justify-center z-50 p-0 md:p-4">
-        <div className={`bg-white w-full h-full flex flex-col px-6 py-9 md:p-0 md:block md:h-auto md:rounded-xl overflow-y-auto md:shadow-lg ${step==="profile"?"md:max-w-3xl":"md:max-w-[30rem]"}`}>
+      <div className="fixed inset-0 flex  h-screen items-center justify-center z-50 p-0 md:p-4">
+        <div className={`bg-white w-full my-4 h-full flex flex-col px-6 py-9 md:p-0 md:block ${step==="phone" || step==="profile" ?"h-full":"md:h-fit"} md:max-h-[597px] md:rounded-xl overflow-y-auto md:shadow-lg ${step==="profile"?"md:max-w-3xl":"md:max-w-[30rem]"}`}>
           {/* Header */}
           {(step==="phone" || step==="otp") && (<div className='flex gap-5 items-center md:hidden mb-[2.625rem]'>
                   <button onClick={onClose} className='p-2 rounded-full bg-[#FAFAFA] border-[#EEEEEE] border'>
@@ -256,7 +256,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                   </button>
                   <NavLogo className='max-h-6'/>
             </div>)}
-          <div className="flex justify-between md:p-9 items-start pb-0 ">
+          <div className="flex justify-between md:p-9 items-start md:pb-0 ">
             {(step === 'otp' || step === 'profile') && (
               <button
                 onClick={step === 'otp' ? handleBackToPhone : () => setStep('otp')}
@@ -299,7 +299,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <select
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
-                      className="flex-1 px-[1.125rem] mr-[1.125rem] py-4 max-w-[25%] focus:outline-none "
+                      className="flex-1 px-3 md:px-[1.125rem] mr-[1.125rem] py-4 max-w-[25%] text-base md:text-lg focus:outline-none "
                     >
                       <option value="+971">+971</option>
                       <option value="+1">+1</option>
