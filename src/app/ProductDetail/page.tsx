@@ -1,3 +1,5 @@
+'use client';
+
 import UpperSearch from '@/components/ProductDetail/upperSearch'
 import React from 'react';
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
