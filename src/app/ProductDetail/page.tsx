@@ -74,7 +74,7 @@ const ProductDetail = () => {
     Past Brands & Industries Featured
   </h2>
           <div className="flex flex-wrap gap-3.5 mt-6 lg:mt-7">
-       {["Automotive OEMs","Premium Retail","Real Estate Developers","Telecom & Devices","Banks & Fintech"].map((item)=><div className="flex-wrap py-[1.125rem] px-6 bg-white text-center shrink-0  rounded-full border border-[#EEEEEE] font-medium font-satoshi text-base">
+       {["Automotive OEMs","Premium Retail","Real Estate Developers","Telecom & Devices","Banks & Fintech"].map((item, index)=><div key={index}  className="flex-wrap py-[1.125rem] px-6 bg-white text-center shrink-0  rounded-full border border-[#EEEEEE] font-medium font-satoshi text-base">
           {item}
         </div>)}
       </div>
