@@ -14,7 +14,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-interface ProductmapProps {
+export interface ProductmapProps {
   latitude?: number;
   longitude?: number;
   locationName?: string;

@@ -12,8 +12,9 @@ import BusinessCategory from '@/components/ProductDetail/businesscategory';
 import { PiClockCountdownLight } from "react-icons/pi";
 import Pointstoconsider from '@/components/ProductDetail/pointstoconsider';
 import dynamic from 'next/dynamic';
+import type { ProductmapProps } from '@/components/ProductDetail/productmap';
 
-const Productmap = dynamic(
+const Productmap = dynamic<ProductmapProps>(
   () => import('@/components/ProductDetail/productmap').then((mod) => mod.Productmap),
   { ssr: false }
 );
