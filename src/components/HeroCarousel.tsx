@@ -1,10 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, A11y } from "swiper/modules";
 import { LuSearch } from "react-icons/lu";
-import { LuMedal } from "react-icons/lu";
+import billboard from "../../public/billboard.jpg";
+import Image from "next/image";
+import { GoPlus } from "react-icons/go";
+import { FaCartShopping } from "react-icons/fa6";
+import { FiChevronRight } from "react-icons/fi"
+import { FaCar } from "react-icons/fa"
 
 // Swiper core styles
 import "swiper/css";
@@ -41,14 +46,74 @@ const slides: Slide[] = [
   },
 ];
 
+const mockSuggestions = [
+  {
+    type: "Billboards",
+    title: "Rd to King Al Azab, Dubai",
+    cars: "5,000,000",
+    image: billboard,
+    action: true,
+  },
+  {
+    type: "Billboards",
+    title: "Rd to Shammari Al Azab, Dubai",
+    cars: "9,000,000",
+    image: billboard,
+    action: true,
+  },
+  {
+    type: "Billboards",
+    title: "Rd to King Al Aya, Dubai",
+    cars: "2,000,000",
+    image: billboard,
+    action: true,
+  },
+  {
+    type: "Billboards",
+    title: "Sharjah Bus Stand, Dubai",
+    cars: "8,000,000",
+    image: billboard,
+    action: true,
+  },
+  {
+    type: "Audience",
+    title: "Sports Enthusiasts",
+    subtitle: "Audience Category",
+    image: billboard,
+    action: false,
+  },
+  {
+    type: "Location",
+    title: "Sports City",
+    subtitle: "Location",
+    image: "",
+    action: false,
+  },
+  {
+    type: "Media",
+    title: "Mall Advertising",
+    subtitle: "Media Type",
+    image: billboard,
+    action: false,
+  },
+];
+
 export default function HeroCarousel() {
+  const [query, setQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const filtered = query
+    ? mockSuggestions.filter((s) =>
+        s.title.toLowerCase().includes(query.toLowerCase())
+      )
+    : [];
+
   return (
     <section
       aria-label="Featured marketing messages"
       className=" w-full mt-[5.5rem] lg:mt-28 px-6 py-[3.375rem] md:py-16 lg:py-6 lg:flex-1 lg:flex lg:justify-between lg:items-center  bg-white flex justify-between items-center"
     >
       <div className="mx-auto w-full max-w-3xl">
-
         {/* <div className="bg-[#6155F513] py-3.5 px-[1.125rem]  rounded-[3.5rem] mx-auto mb-8 flex gap-2.5 w-fit ">
           <LuMedal className="text-[#6155F5] h-[1.125rem] w-[1.125rem] md:h-6 md:w-6"/>
           <h3 className="text-[#6155F5] whitespace-nowrap font-bold text-sm md:text-lg font-satoshi">ADVERTISING SOLUTION</h3>
@@ -74,45 +139,103 @@ export default function HeroCarousel() {
             </SwiperSlide>
           ))}
         </Swiper>
-          <form
-                    role="search"
-                    aria-label="Search media"
-                    className="mt-8 md:mt-10 lg:mt-12 flex items-stretch gap-[0.875rem]"
-                    onSubmit={(e) => e.preventDefault()}
-                  >
-                    <label htmlFor="hero-search" className="sr-only">
-                      Search by media type, location, or audience
-                    </label>
-                    <div className="relative w-full flex gap-2.5">
-                      <LuSearch
-                        aria-hidden="true"
-                        className="pointer-events-none hidden md:block absolute left-[1.125rem] top-1/2 -translate-y-1/2 text-balck"
-                        size={24}
-                      />
-                      <input
-                        id="hero-search"
-                        name="q"
-                        type="search"
-                        placeholder="Search for Media in UAE"
-                        className="w-full rounded-xl border outline-none border-[#EEEEEE] bg-white px-[1.125rem] md:pl-[3.25rem] md:pr-4 text-gray-800 shadow-[0px 4px 40px 0px #0000001A] placeholder:text-[#6B7280] placeholder:font-medium placeholder:text-sm placeholder:lg:text-lg"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      className="rounded-xl hidden md:block whitespace-nowrap font-satoshi bg-brand px-5 py-[1.125rem] text-pretty text-xl font-medium text-white md:shadow-sm hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform"
-                    >
-                      View all Places
-                    </button>
-                     <button
-                      type="submit"
-                      className="rounded-xl md:hidden whitespace-nowrap font-satoshi bg-brand py-4 px-[1.125rem] text-pretty text-xl font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    >
-                      <LuSearch className=" text-white h-5 w-5"/>
-                    </button>
-                  </form>
+        <form
+          role="search"
+          aria-label="Search media"
+          className="mt-8 md:mt-10 lg:mt-12 flex items-stretch gap-[0.875rem]"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <label htmlFor="hero-search" className="sr-only">
+            Search by media type, location, or audience
+          </label>
+          <div className="relative w-full flex gap-2.5">
+            <LuSearch
+              aria-hidden="true"
+              className="pointer-events-none hidden md:block absolute left-[1.125rem] top-1/2 -translate-y-1/2 text-balck"
+              size={24}
+            />
+            <input
+              id="hero-search"
+              name="q"
+              type="search"
+              placeholder="Search for Media in UAE"
+              className="w-full rounded-xl border outline-none border-[#EEEEEE] bg-white px-[1.125rem] md:pl-[3.25rem] md:pr-4 text-gray-800 shadow-[0px 4px 40px 0px #0000001A] placeholder:text-[#6B7280] placeholder:font-medium placeholder:text-sm placeholder:lg:text-lg"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setShowSuggestions(true);
+              }}
+              onFocus={() => query && setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              autoComplete="off"
+            />
+               {showSuggestions && filtered.length > 0 && (
+                        <div className="fixed !z-50  sm:absolute left-0 top-[25%] sm:top-[110%] w-screen  sm:w-full sm:rounded-2xl bg-white shadow-2xl border border-[#EEEEEE] py-2 max-h-[420px] overflow-y-auto">
+                          {mockSuggestions.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="flex !z-50 items-center px-4 py-3 hover:bg-[#F9FAFB] transition cursor-pointer border-b last:border-b-0 border-[#F3F4F6]"
+                            >
+                              {/* Image or Icon */}
+                              {item.image ? (
+                                <Image
+                                  src={item.image}
+                                  alt={item.title}
+                                  className="w-24 h-16 rounded-lg object-cover mr-5"
+                                />
+                              ) : item.type === "Location" ? (
+                                <span className="w-24 h-16 flex items-center justify-center rounded-lg bg-[#FFF3ED] mr-5">
+                                  <svg width="24" height="24" fill="#FF7A1A" viewBox="0 0 24 24"><path d="M12 2C7.03 2 3 6.03 3 11c0 5.25 7.05 10.74 8.09 11.51.56.41 1.26.41 1.82 0C13.95 21.74 21 16.25 21 11c0-4.97-4.03-9-9-9zm0 17.88C10.14 18.09 5 13.97 5 11c0-3.87 3.13-7 7-7s7 3.13 7 7c0 2.97-5.14 7.09-7 8.88z"/><circle cx="12" cy="11" r="2.5"/></svg>
+                                </span>
+                              ) : (
+                                <span className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F3F4F6] mr-4"></span>
+                              )}
+                              {/* Content */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xs font-satoshi font-medium ${item.type === "Billboards" ? "text-brand" : "text-gray-500"}`}>
+                                    {item.type === "Billboards" ? "Billboards" : item.type === "Audience" ? "" : ""}
+                                  </span>
+                                </div>
+                                <div className="font-bold text-base pt-1 font-satoshi  truncate">{item.title}</div>
+                                {item.cars && (
+                                  <div className="flex items-center gap-1 text-xs text-[#6B7280] mt-1">
+                                    <FaCar className="w-4 h-4 text-black" />
+                                    <span>{item.cars} cars/ day</span>
+                                  </div>
+                                )}
+                                {item.subtitle && (
+                                  <div className="text-sm text-gray-400">{item.subtitle}</div>
+                                )}
+                              </div>
+                              {/* Action Button or Chevron */}
+                              {item.action ? (
+                                <button className="px-3 hidden sm:flex py-2.5 text-white rounded-lg bg-brand items-center gap-0.5 ">
+                                 <GoPlus className="w-4 h-4 text-white"/>
+                                 <FaCartShopping className="w-5 h-5 text-white"/>
+                                </button>
+                              ) : (
+                                <FiChevronRight className="ml-4 w-6 h-6 text-gray-400" />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+          </div>
+          <button
+            type="submit"
+            className="rounded-xl hidden md:block whitespace-nowrap font-satoshi bg-brand px-5 py-[1.125rem] text-pretty text-xl font-medium text-white md:shadow-sm hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform"
+          >
+            View all Places
+          </button>
+          <button
+            type="submit"
+            className="rounded-xl md:hidden whitespace-nowrap font-satoshi bg-brand py-4 px-[1.125rem] text-pretty text-xl font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            <LuSearch className=" text-white h-5 w-5" />
+          </button>
+        </form>
       </div>
     </section>
   );
 }
-
-

@@ -56,9 +56,9 @@ export default function BillboardCarousel() {
     //     ))}
     //   </Swiper>
     // </section>
-       <div className=" w-full max-w-full overflow-x-hidden h-[180px] sm:h-[320px] lg:h-[410px]">
+       <div className=" w-full  max-w-full overflow-x-hidden h-[180px] sm:h-[320px] lg:h-[410px]">
           <Swiper
-            className="h-full w-full px-2 py-5 md:px-6 md:py-12 overflow-hidden"
+            className="h-full w-full !z-20 px-2 py-5 md:px-6 md:py-12 overflow-hidden"
             modules={[ A11y, Autoplay]}
             slidesPerView={2}
             centeredSlides={true}
@@ -81,7 +81,7 @@ export default function BillboardCarousel() {
           >
             {billboards.map((item, index) => (
               <SwiperSlide key={item.id} className="h-full">
-                <div className="relative rounded-sm md:rounded-lg lg:rounded-[0.625rem] w-full h-full overflow-hidden">
+                <div className="relative rounded-sm md:rounded-lg lg:rounded-[0.625rem] w-full h-full ">
                   <Image
                     src={item.src}
                     alt={item.alt}

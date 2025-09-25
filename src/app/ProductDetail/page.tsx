@@ -27,11 +27,17 @@ import Campaigns from '@/components/Campaigns';
 import { IoPricetagOutline } from "react-icons/io5";
 import { FaPlus } from "react-icons/fa6";
 import { IoMdCart } from "react-icons/io";
+import { GoShareAndroid } from "react-icons/go"
 
 const ProductDetail = () => {
   return (
     <div>
+      <div className=" items-center mt-[5.5rem] lg:mt-28  p-6 flex justify-between  md:py-7 lg:px-24 xl:px-[7.75rem]">
       <UpperSearch/>
+      <button className='p-[1.125rem] lg:block hidden rounded-lg border-[#EEEEEE] border'>
+        <GoShareAndroid className='w-6 h-6 text-black'/>
+      </button>
+      </div>
       <div className="px-6 pt-6 pb-[3.375rem] bg-[#FAFAFA] lg:px-24 xl:px-[7.75rem] lg:pb-[7.75rem]">
         <div className="flex gap-2 md:gap-2.5 items-center">
             <p className="font-satoshi text-xs md:text-sm text-[#6B7280] font-medium">Home</p>

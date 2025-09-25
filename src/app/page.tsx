@@ -7,23 +7,22 @@ import FAQ from "@/components/FAQ";
 import Blogs from "@/components/Blogs";
 import Campaigns from "@/components/Campaigns";
 import Planyourcampaign from "@/components/Planyourcampaign";
+import HeroCarousel from "@/components/HeroCarousel";
+import BillboardCarousel from "../components/BillboardCarousel";
+import MediaServices from "@/components/MediaServices";
 
-const HeroCarousel = dynamic(() => import("@/components/HeroCarousel"), {
-  ssr: true,
-});
-const BillboardCarousel = dynamic(
-  () => import("../components/BillboardCarousel"),
-  { ssr: true }
-);
-const MediaServices = dynamic(
-  () => import("../components/MediaServices"),
-  { ssr: true }
-);
+// const HeroCarousel = dynamic(() => import("@/components/HeroCarousel"), {
+//   ssr: true,
+// });
+// const BillboardCarousel = dynamic(
+//   () => import("../components/BillboardCarousel"),
+//   { ssr: true }
+// );
 
 export default function Home() {
   return (
   <div className="w-full !overflow-x-hidden min-h-screen overflow-y-auto">
-    <div className="lg:h-screen lg:min-h-[41rem] lg:overflow-y-hidden lg:flex lg:flex-col">
+    <div className="lg:h-screen lg:min-h-[41rem]  lg:flex lg:flex-col">
     <div className="lg:flex-1 flex">
      <HeroCarousel />
      </div>

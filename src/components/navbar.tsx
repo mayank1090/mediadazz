@@ -20,6 +20,7 @@ import { MenuItem, MenuSection, TopLevel } from "../types/navbar";
 import NavLogo from "../images/navlogo";
 import Dummyuser from "../../public/Dummyuser.png";
 import cart from "../../public/cart.svg";
+import { useRouter } from "next/navigation";
 
 type Props = {
   topLevels: TopLevel[];
@@ -39,6 +40,7 @@ export default function SidebarMegaMenu({
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   // Check user login status from localStorage
   useEffect(() => {
@@ -199,16 +201,17 @@ export default function SidebarMegaMenu({
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8">
                         {t.sections.map((sec) => (
                           <div key={sec.heading} className="min-w-0">
-                            <h3 className="text-sm xl:text-base font-medium font-satoshi text-brand uppercase mb-6">
+                            <h3 onClick={()=>router.push("/Category")} className="text-sm xl:text-base font-medium cursor-pointer font-satoshi text-brand uppercase mb-6">
                               {sec.heading}
                             </h3>
                             <ul className="space-y-6">
                               {sec.items.map((item) => (
                                 <li key={item.label}>
                                   <Link
-                                    href={item.href}
+                                  href={"/subcategory"}
                                     className="block text-xs xl:text-sm text-neutral-800 hover:text-brand"
-                                    onClick={() => setClickedIndex(null)}
+                                    onClick={() => 
+                                      setClickedIndex(null)}
                                   >
                                     {item.label}
                                   </Link>
@@ -408,14 +411,14 @@ export default function SidebarMegaMenu({
                         key={index}
                         className="mt-6 px-3.5 bg-white last:mb-6"
                       >
-                        <h3 className="text-[11px] font-semibold tracking-wide text-brand uppercase mb-2">
+                        <h3 onClick={()=>router.push("/Category")}  className="text-[11px] font-semibold tracking-wide text-brand uppercase mb-2">
                           {sec.heading}
                         </h3>
                         <ul className="space-y-2">
                           {sec.items.map((item, index) => (
                             <li key={index}>
                               <Link
-                                href={item.href}
+                                href={"/subcategory"}
                                 className="block text-sm text-neutral-800"
                                 onClick={() => setMobileOpen(false)}
                               >
