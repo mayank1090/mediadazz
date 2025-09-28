@@ -16,8 +16,8 @@ const Listingcarousel = () => {
      const [cartOpen, setCartOpen] = useState(false);
   return (
     <div className="md:grid grid-cols-2 lg:flex lg:overflow-x-scroll  no-scrollbar gap-3.5 lg:gap-6 lg:mt-16 lg:last:mr-6">
-        {[1,2,3,4].map((item)=>(
-    <div  className="mt-14 cursor-pointer lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
+        {[1,2,3,4].map((item, index)=>(
+    <div key={index}  className="mt-14 cursor-pointer lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  lg:min-w-[404px]">
         <div className="w-full max-h-[314px] relative overflow-hidden ">
         <Image onClick={()=>router.push("/ProductDetail")}  src={first} alt="Featured listing" className="w-full h-full max-h-full object-cover object-center" />
          <HeartButton itemId="billboard-1" />
