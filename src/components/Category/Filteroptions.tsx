@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState } from 'react'
@@ -21,7 +20,7 @@ const Filteroptions = () => {
       id: 'City',
       label: 'City',
       options: ['Dubai', 'Abu Dhabi', 'Sharjah'],
-      type: 'radio'
+      type: 'checkbox' // <-- changed from 'radio' to 'checkbox'
     },
     {
       id: 'Sub-Category',
@@ -125,10 +124,8 @@ const Filteroptions = () => {
     <div className="">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-
         <div className="flex flex-col gap-1 ">
             <h3 className='text-lg font-satoshi font-medium'>Filters</h3>
-            
         <span className="text-[#6B7280] font-satoshi text-sm lg:text-base font-medium">
           {getTotalAppliedFilters()} filters applied
         </span>
@@ -163,6 +160,34 @@ const Filteroptions = () => {
             {/* Expanded Content */}
             {expandedSection === section.id && (
               <div className="px-4 pb-4">
+                {/* Selected City Chip */}
+                {section.id === 'City' && selectedFilters['City'] && selectedFilters['City'].length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {selectedFilters['City'].map((city) => (
+                      <span
+                        key={city}
+                        className="flex items-center bg-white border border-[#F0682F] rounded-full p-1 pr-4 gap-1.5 "
+                      > <button
+                          type="button"
+                          className="p-1.5 flex items-center justify-center rounded-full bg-[#FFEAE1] "
+                          onClick={() =>
+                            setSelectedFilters(prev => ({
+                              ...prev,
+                              City: prev.City.filter((c) => c !== city)
+                            }))
+                          }
+                          aria-label={`Remove ${city}`}
+                        >
+                          <svg viewBox="0 0 20 20" fill="currentColor" className="x w-4 h-4 text-brand">
+                            <path fillRule="evenodd" d="M10 8.586l4.95-4.95a1 1 0 111.414 1.415L11.414 10l4.95 4.95a1 1 0 01-1.414 1.415L10 11.414l-4.95 4.95a1 1 0 01-1.415-1.415L8.586 10l-4.95-4.95A1 1 0 115.05 3.636L10 8.586z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                        <span className="text-sm font-satoshi font-medium">{city}</span>
+                       
+                      </span>
+                    ))}
+                  </div>
+                )}
                 {/* City Search Bar */}
                 {section.id === 'City' && (
                   <div className="mb-4">

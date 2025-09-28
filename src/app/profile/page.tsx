@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FiArrowLeft, FiUser, FiMail, FiBriefcase, FiChevronDown } from 'react-icons/fi';
 import Dummyuser from '../../../public/Dummyuser.png';
 import Listingcarousel from '@/components/listingcarousel';
+import OrdersTable from '@/components/OrdersTable';
 
 export default function ProfilePage() {
 	const [activeTab, setActiveTab] = useState('personal-details');
@@ -80,7 +81,7 @@ export default function ProfilePage() {
 					</div>
 				</div>
                 </div>
-          <div className={`flex-1 relative p-6 lg:py-12 bg-[#FAFAFA] flex flex-col ${activeTab==="wishlist"?"pt-0":""} justify-between md:py-7 lg:px-24 xl:px-[7.75rem]`}>
+          <div className={`flex-1 relative p-6 lg:py-12 bg-white md:bg-[#FAFAFA] flex flex-col ${activeTab==="wishlist"?"pt-0":""} justify-between md:py-7 lg:px-24 xl:px-[7.75rem]`}>
 				{/* Main Content */}
                 <div className="">
 				{activeTab === 'personal-details' && (
@@ -210,13 +211,14 @@ export default function ProfilePage() {
 
 				{/* Orders Tab Content */}
 				{activeTab === 'orders' && (
-					<div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-						<div className="py-12">
-							<FiBriefcase className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-							<h3 className="text-lg font-medium text-gray-900 mb-2">No Orders Yet</h3>
-							<p className="text-gray-600">Your order history will appear here once you make your first purchase.</p>
-						</div>
-					</div>
+					// <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+					// 	<div className="py-12">
+					// 		<FiBriefcase className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+					// 		<h3 className="text-lg font-medium text-gray-900 mb-2">No Orders Yet</h3>
+					// 		<p className="text-gray-600">Your order history will appear here once you make your first purchase.</p>
+					// 	</div>
+					// </div>
+					<OrdersTable />
 				)}
 
                 </div>

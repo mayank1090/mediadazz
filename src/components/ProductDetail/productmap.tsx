@@ -1,5 +1,6 @@
 'use client';
 import React from 'react'
+import 'leaflet/dist/leaflet.css'
 import { FaLocationDot } from "react-icons/fa6";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -24,6 +25,15 @@ export const Productmap = ({
   longitude = -74.0060, 
   locationName = "New York, NY" 
 }: ProductmapProps) => {
+  const [isMounted, setIsMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setIsMounted(true)
+  }, [])
+
+  if (!isMounted) {
+    return null
+  }
   return (
     <div className='bg-white rounded-2xl lg:rounded-[1.125rem] p-4 lg:p-6'>
       <h3 className='flex items-center gap-3 text-xl font-bold font-satoshi mb-4'>
@@ -37,6 +47,7 @@ export const Productmap = ({
           zoom={13}
           style={{ height: '100%', width: '100%' ,}}
           className="z-0"
+          key={`${latitude}-${longitude}`}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

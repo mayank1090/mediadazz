@@ -3,13 +3,18 @@ import CartButton from "../CartButton";
 import first from "../../../public/first.svg"
 import Image from "next/image";
 import { LuUserRound } from "react-icons/lu";
-import { LiaCarSolid } from "react-icons/lia";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { GoPlus } from "react-icons/go";
 import { FaCartShopping } from "react-icons/fa6";
+import { useState } from "react";
+import MediaCartModal from "../MediaCartModal";
+import { FaCircleCheck } from "react-icons/fa6";
 
 const CategoryCatalogue = () => {
+  const [cartOpen, setCartOpen] = useState(false);
+
   return (
+    <>
     <div className="space-y-5">
       {[1,2,3].map((_, index) => (
         <div key={index} className="bg-white rounded-lg border border-[#EEEEEE] cursor-pointer flex ">
@@ -58,18 +63,33 @@ const CategoryCatalogue = () => {
        <p className="text-sm font-medium font-satoshi">Price on Request</p>
         </div>
 
-        <button className="px-4 py-3 rounded-lg bg-brand font-bold text-base font-satoshi text-white flex gap-2.5 items-center">
-            <div className="flex ">
-                <GoPlus className="w-4 h-4 text-white"/>
-                <FaCartShopping className="w-5 h-5 text-white"/>
-            </div>
-           <span className="xl:block hidden">Add to media Cart</span>
+       {index===0?
+       <button
+          className="px-4 py-3 rounded-full bg-[#DCFCE7] font-bold text-base font-satoshi flex gap-2.5 items-center"
+        >
+        
+          <span className="xl:block hidden text-sm font-medium">Added to media Cart</span>
+            
+            <FaCircleCheck className="w-5 h-5 text-[#22C55E]"/>
+            <FaCartShopping className="w-5 h-5 xl:hidden text-[#22C55E]"/>
         </button>
+        :<button
+          className="px-4 py-3 rounded-lg bg-brand font-bold text-base font-satoshi text-white flex gap-2.5 items-center"
+          onClick={() => setCartOpen(true)}
+        >
+          <div className="flex ">
+            <GoPlus className="w-4 h-4 text-white"/>
+            <FaCartShopping className="w-5 h-5 text-white"/>
+          </div>
+          <span className="xl:block hidden">Add to media Cart</span>
+        </button>} 
        </div>
         </div>
         </div>
       ))}
     </div>
+    <MediaCartModal open={cartOpen} onClose={() => setCartOpen(false)} />
+    </>
   )
 }
 

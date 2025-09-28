@@ -5,7 +5,7 @@ import { GoPlus } from "react-icons/go";
 import { FaCartShopping } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 
-export default function CartButton() {
+export default function CartButton({ setCartOpen }: { setCartOpen: (open: boolean) => void }) {
   const [isHovered, setIsHovered] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,6 +23,7 @@ export default function CartButton() {
   };
 
   const handleClick = () => {
+    setCartOpen(true);
     toast.success('Item added to cart', {
       position: "top-right",
       autoClose: 3000,

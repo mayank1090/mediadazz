@@ -1,13 +1,15 @@
 import type { NextConfig } from "next";
 
+const isProd = process.env.NODE_ENV === 'production';
+
 const nextConfig: NextConfig = {
-  // Enable static optimization
-  output: 'export',
+  // Enable static optimization only in production
+  output: isProd ? 'export' : undefined,
   trailingSlash: true,
   
   // Image optimization
   images: {
-    unoptimized: true, // Required for static export
+    unoptimized: isProd, // Required for static export
     formats: ['image/webp', 'image/avif'],
   },
   
@@ -16,7 +18,7 @@ const nextConfig: NextConfig = {
   
   // Bundle optimization
   experimental: {
-    optimizeCss: true,
+    optimizeCss: isProd,
     optimizePackageImports: ['react-icons', 'swiper'],
   },
   
@@ -54,8 +56,9 @@ const nextConfig: NextConfig = {
     return config;
   },
   
-  // Headers for better caching
+  // Headers for better caching (prod only)
   async headers() {
+    if (!isProd) return [];
     return [
       {
         source: '/(.*)',
