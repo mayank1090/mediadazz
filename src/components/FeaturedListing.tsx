@@ -9,7 +9,7 @@ export default function FeatureListing (){
         <h2 className="font-satoshi mt-2.5 font-bold text-[2rem] lg:text-4xl xl:text-5xl leading-[2.625rem]">Featured Listings in Dubai</h2>
         <p className="font-satoshi lg:text-xl xl:text-[1.375rem] font-medium text-base text-[#6B7280]">Top-performing ad spaces, handpicked to give your brand maximum visibility</p>
         </div>
-    <Listingcarousel/>
+    <Listingcarousel city="dubai"/>
     </div>
     </>)
 }
