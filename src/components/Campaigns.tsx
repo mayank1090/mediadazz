@@ -54,7 +54,7 @@ export default function Campaigns ({ heading = "Turn Ideas Into Impactful Campai
             
             </div>
           </div>
-          <button className="sm:hidden py-[1.125rem] bg-brand rounded-lg font-bold text-lg font-satoshi cursor-pointer text-center w-full mt-6 text-white">{buttonText}</button>
+          <button className="lg:hidden py-[1.125rem] bg-brand rounded-lg font-bold text-lg font-satoshi cursor-pointer text-center w-full mt-6 text-white">{buttonText}</button>
         </div>
     </>)
 }

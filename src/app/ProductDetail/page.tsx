@@ -47,6 +47,7 @@ const ProductDetail = () => {
   // Modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [modalIndex, setModalIndex] = useState(0);
+const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const openModal = (idx: number) => {
     setModalIndex(idx);
@@ -83,6 +84,12 @@ const ProductDetail = () => {
       window.removeEventListener('resize', evaluateVisibility)
     }
   }, [])
+
+  useEffect(() => {
+  if (typeof window !== "undefined") {
+    setIsLoggedIn(localStorage.getItem('useractive') === 'true');
+  }
+}, []);
 
   return (
     <div>
@@ -140,7 +147,7 @@ const ProductDetail = () => {
         </div>
       )}
       {!buttonsInView && (
-       <div className="fixed bottom-0 top-auto  lg:bottom-auto lg:top-28 left-0 right-0 z-10 bg-white backdrop-blur">
+       <div className="fixed bottom-0 top-auto  lg:bottom-auto lg:top-28 left-0 right-0 z-20 bg-white backdrop-blur">
           <div className="px-6 py-5 lg:px-24 xl:px-[7.75rem] flex justify-between gap-4 xl:gap-6 items-center">
 
  <div className="lg:flex hidden lg:flex-1 xl:flex-2 gap-[1.125rem] lg:gap-6 items-center">
@@ -230,12 +237,20 @@ const ProductDetail = () => {
             <button className="px-[1.125rem] text-white cursor-pointer py-4 bg-brand w-full rounded-lg text-xl font-satoshi font-bold mx-auto justify-center hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg flex items-center  hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform gap-2.5"><span className='flex items-center gap-1'> <FaPlus/> <IoMdCart/> </span>Add to cart</button>
           </div>
             </div>
-          <div className="lg:w-[65%] mt-6 md:mt-10 lg:shrink-0 space-y-9 lg:space-y-12">
+          <div className="mt-6 md:mt-10 space-y-9 lg:space-y-12">
             
             <div className="">
             <h3 className='font-bold font-satoshi text-xl '>About this Media</h3>
             <p className="text-base mt-5 font-medium font-satoshi lg:text-lg text-[#6B7280]">High-visibility LED unipole positioned on the Maktoum Bridge to Deira City Centre route, capturing commuters, shoppers, and tourists with long dwell times and premium sightlines.It’s located near The Canadian University and Shangri La Hotel behind of Sheikh Zayed Road also very close the world famous Burj Khalifa. It can be seen by all traffic coming from Diyafa Street, Bur Dubai towards Mazaya Centre, Safa Park & Sheikh Zayed Road.</p>
           </div>
+          <div className="relative space-y-9 lg:space-y-12">
+             {!isLoggedIn && (
+      <div className="absolute z-10 w-full h-full flex flex-col items-center justify-center bg-[#0000000D] backdrop-blur-md  px-4 py-8">
+        <h3 className="font-bold font-satoshi text-center text-lg md:text-2xl mb-2">Log in to view all Insights</h3>
+        <p className="text-[#6B7280] text-center text-sm md:text-base mb-5">Bunch of Public insights backed by Data at your Fingertips</p>
+        <button className="bg-brand text-white font-bold font-satoshi rounded-lg px-8 py-3 text-base md:text-lg">Log in</button>
+      </div>
+    )}
           <Insights/>
           <BusinessCategory/>
           <div className="">
@@ -253,6 +268,7 @@ const ProductDetail = () => {
           <Productmap/>
           <TargetAudience/>
           <Marketfriendly/>
+          </div>
           <ProductFAQ/>
           </div>
          
