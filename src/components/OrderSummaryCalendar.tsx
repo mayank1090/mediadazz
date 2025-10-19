@@ -162,23 +162,42 @@ export default function Calendar({
       {/* Modal for apply to all */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-[90vw] max-w-md flex flex-col items-center">
-            <p className="font-satoshi font-medium text-lg text-center mb-6">
-              Would you like to apply this dates changes to all your orders?
-            </p>
-            <div className="flex gap-3 w-full flex-col sm:flex-row">
-              <button
-                className="flex-1 py-2 rounded-lg border border-brand text-brand font-satoshi font-medium bg-white hover:bg-[#FFF7F0] transition"
-                onClick={handleApplyThis}
-              >
-                Apply to this order only
-              </button>
-              <button
-                className="flex-1 py-2 rounded-lg bg-brand text-white font-satoshi font-medium transition"
-                onClick={handleApplyAll}
-              >
-                Apply to all
-              </button>
+          <div className="relative bg-white rounded-2xl p-9 w-[92vw] max-w-md modal-shadow">
+            {/* close button */}
+            <button
+              aria-label="Close"
+              onClick={() => { setShowModal(false); }}
+              className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-full text-gray-500 hover:bg-gray-100"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M1 1L13 13M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            <div className="flex flex-col items-center text-center pt-6 pb-4 px-2">
+              {/* circular question mark */}
+              <div className="h-[100px] w-[100px] rounded-full bg-[#F3F3F3] flex items-center justify-center mb-9">
+                <span className="text-6xl font-medium text-[#F97316]">?</span>
+              </div>
+
+              <p className="font-satoshi text-base font-medium text-[#6B7280] mb-6 px-4">
+                Apply same dates to all the media in cart?
+              </p>
+
+              <div className="flex gap-4 w-full px-4">
+                <button
+                  onClick={handleApplyThis}
+                  className="flex-1 py-2.5 rounded-lg bg-white border border-[#E6E7EA] text-[#374151] font-satoshi text-sm font-medium hover:bg-[#F8F9FB] transition"
+                >
+                  No
+                </button>
+                <button
+                  onClick={handleApplyAll}
+                  className="flex-1 py-2.5 rounded-lg bg-brand text-white font-satoshi font-medium  text-sm hover:brightness-95 transition"
+                >
+                  Apply
+                </button>
+              </div>
             </div>
           </div>
         </div>

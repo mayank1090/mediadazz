@@ -19,17 +19,17 @@ const dummyText = [
         title: "Save Time and Effort",
         description: "The traditional way of buying media is slow and fragmented, consisting of calling sales reps, chasing rates, and endless negotiating. With MediaDazz, you fill in one simple form and instantly reach a network of media owners who are ready to pitch relevant options."
     },
-     {
+    {
         icon: campbenefittwo,
         title: "Access a Wide Range of Media Options",
         description: "From billboards on Sheikh Zayed Road to digital screens in Dubai Mall, TV prime-time slots, or Instagram influencer partnerships, MediaDazz brings every kind of media together under one roof. You get a 360° view of what’s available in your market."
     },
-     {
+    {
         icon: campbenefitthree,
         title: "Get Unbeatable Pricing",
         description: "Because multiple media owners respond to your brief, you can compare offers side-by-side and choose the one that gives you the best reach, cost, and creativity for your budget."
     },
-     {
+    {
         icon: campbenefitfour,
         title: "Verified Media Owners Only",
         description: "Every media owner on MediaDazz goes through a verification process. This ensures you only receive proposals from genuine, authorized vendors, reducing the risk of fraud or wasted spend."
@@ -38,19 +38,19 @@ const dummyText = [
 ]
 
 const problems = [
-  {text: "😕 Endless back-and-forth calls" },
-  { text: "😕 Limited to vendors you already know" },
-  { text: "😕 Opaque pricing & hidden commissions" },
-  { text: "😕 Slow turnarounds" },
-  { text: "😕 Hard to compare different media types" },
+    { text: "😕 Endless back-and-forth calls" },
+    { text: "😕 Limited to vendors you already know" },
+    { text: "😕 Opaque pricing & hidden commissions" },
+    { text: "😕 Slow turnarounds" },
+    { text: "😕 Hard to compare different media types" },
 ];
 
 const benefits = [
-  { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Submit one form, get multiple proposals" },
-  { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Access a nationwide network of verified media owners" },
-  { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Transparent proposals with clear cost models" },
-  { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Quick responses from vendors who want your business" },
-  { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Side-by-side comparison across OOH, TV, digital, print, influencers, and more" },
+    { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Submit one form, get multiple proposals" },
+    { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Access a nationwide network of verified media owners" },
+    { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Transparent proposals with clear cost models" },
+    { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Quick responses from vendors who want your business" },
+    { icon: <BsCheckCircleFill className="text-[#22C55E] inline mr-2 lg:mr-3" />, text: "Side-by-side comparison across OOH, TV, digital, print, influencers, and more" },
 ];
 
 const campaignsPage = () => {
@@ -110,19 +110,19 @@ const campaignsPage = () => {
                     <h4 className="font-medium text-sm lg:text-lg font-satoshi text-[#6B7280]">Discover the widest network of media spaces across all channels.</h4>
                 </div>
                 <div className="mt-6 md:mt-12 lg:mt-16 flex flex-col gap-7 md:gap-3.5">
-                 {dummyText.map((item, index)=>
-                 <div key={index} className="rounded-xl md:rounded-[0.625rem] p-3 md:p-2.5 flex gap-1.5 md:gap-2.5 flex-col md:flex-row md:items-center border border-[#EEEEEE] bg-white">
-                        <div className="bg-[#FFEAE1] py-9 md:p-9 rounded-lg shrink-0 ">
-                            <Image src={item?.icon} alt="benefitone" className='h-12 w-12 mx-auto shrink-0' />
-                        </div>
-                        <div className="p-3 md:p-3.5">
-                            <h3 className="font-bold text-xl font-satoshi">{item?.title}</h3>
-                            <h5 className="pt-2.5 md:pt-2 text-base md:text-lg font-medium font-satoshi text-[#6B7280]">{item?.description}</h5>
-                        </div>
-                    </div>)}   
+                    {dummyText.map((item, index) =>
+                        <div key={index} className="rounded-xl md:rounded-[0.625rem] p-3 md:p-2.5 flex gap-1.5 md:gap-2.5 flex-col md:flex-row md:items-center border border-[#EEEEEE] bg-white">
+                            <div className="bg-[#FFEAE1] py-9 md:p-9 rounded-lg shrink-0 ">
+                                <Image src={item?.icon} alt="benefitone" className='h-12 w-12 mx-auto shrink-0' />
+                            </div>
+                            <div className="p-3 md:p-3.5">
+                                <h3 className="font-bold text-xl font-satoshi">{item?.title}</h3>
+                                <h5 className="pt-2.5 md:pt-2 text-base md:text-lg font-medium font-satoshi text-[#6B7280]">{item?.description}</h5>
+                            </div>
+                        </div>)}
                 </div>
             </div>
-            <Planyourcampaign/>
+            <Planyourcampaign />
             <div className="px-6  py-14 lg:py-20 md:pt-8 md:pb-16 lg:px-24 xl:px-[7.75rem] ">
 
                 <div className="space-y-6 md:space-y-3.5">
@@ -139,17 +139,17 @@ const campaignsPage = () => {
                         ))}
                     </div>
                     <p className="font-bold text-[2rem] text-center font-satoshi lg:mt-[1.875rem]">Vs</p>
-                     <div className="border flex-1 border-[#EEEEEE] rounded-[0.875rem] overflow-hidden">
+                    <div className="border flex-1 border-[#EEEEEE] rounded-[0.875rem] overflow-hidden">
                         <p className="py-6 md:py-8 bg-[#FFEAE1] px-4 text-lg md:text-xl font-bold font-satoshi text-center"><Image src={logosample} alt="benefit icon" className='h-7 mx-auto shrink-0' /></p>
                         {benefits.map((item, index) => (
                             <div key={index} className="p-6 font-medium text-base lg:text-xl font-satoshi border-b border-[#EEEEEE] last:border-b-0">
-                              <span>{item.icon}</span>{item.text}
+                                <span>{item.icon}</span>{item.text}
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
-            <Campaigns heading='Your brand deserves to shine where it matters most'  buttonText='Request a Custom plan'/>
+            <Campaigns heading='Your brand deserves to shine where it matters most' buttonText='Request a Custom plan' />
         </div>
     )
 }
