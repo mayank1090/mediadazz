@@ -18,12 +18,14 @@ export interface ProductmapProps {
   latitude?: number;
   longitude?: number;
   locationName?: string;
+  isLoggedIn?: boolean;
 }
 
 export const Productmap = ({ 
   latitude = 40.7128, 
   longitude = -74.0060, 
-  locationName = "New York, NY" 
+  locationName = "New York, NY" ,
+  isLoggedIn = false
 }: ProductmapProps) => {
   const [isMounted, setIsMounted] = React.useState(false)
 
@@ -40,7 +42,7 @@ export const Productmap = ({
         <FaLocationDot className='text-brand w-4'/>
         Map
       </h3>
-      
+      <div className={`${!isLoggedIn ? "min-h-60" : "min-h-0"} relative`}>
       <div className="h-64 lg:h-80 w-full max-w-full rounded-lg overflow-hidden">
         <MapContainer
           center={[latitude, longitude]}
@@ -66,6 +68,14 @@ export const Productmap = ({
         <RiExternalLinkLine className='w-[0.875rem] h-[0.875rem]'/>
         Open in Google Maps
       </button>
+       {!isLoggedIn && (
+      <div className="absolute z-10 w-full h-full top-0 left-0 min-h-28 flex flex-col items-center justify-center bg-[#0000000D] backdrop-blur-md  px-4 py-8">
+        <h3 className="font-bold font-satoshi text-center text-lg md:text-2xl mb-2">Log in to view all Insights</h3>
+        <p className="text-[#6B7280] text-center text-sm md:text-base mb-5">Bunch of Public insights backed by Data at your Fingertips</p>
+        <button className="bg-brand text-white font-bold font-satoshi rounded-lg px-8 py-3 text-base md:text-lg">Log in</button>
+      </div>
+    )}
+      </div>
     </div>
   )
 }

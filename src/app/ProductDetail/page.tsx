@@ -243,31 +243,32 @@ const [isLoggedIn, setIsLoggedIn] = useState(false);
             <h3 className='font-bold font-satoshi text-xl '>About this Media</h3>
             <p className="text-base mt-5 font-medium font-satoshi lg:text-lg text-[#6B7280]">High-visibility LED unipole positioned on the Maktoum Bridge to Deira City Centre route, capturing commuters, shoppers, and tourists with long dwell times and premium sightlines.It’s located near The Canadian University and Shangri La Hotel behind of Sheikh Zayed Road also very close the world famous Burj Khalifa. It can be seen by all traffic coming from Diyafa Street, Bur Dubai towards Mazaya Centre, Safa Park & Sheikh Zayed Road.</p>
           </div>
-          <div className="relative space-y-9 lg:space-y-12">
-             {!isLoggedIn && (
-      <div className="absolute z-10 w-full h-full flex flex-col items-center justify-center bg-[#0000000D] backdrop-blur-md  px-4 py-8">
-        <h3 className="font-bold font-satoshi text-center text-lg md:text-2xl mb-2">Log in to view all Insights</h3>
-        <p className="text-[#6B7280] text-center text-sm md:text-base mb-5">Bunch of Public insights backed by Data at your Fingertips</p>
-        <button className="bg-brand text-white font-bold font-satoshi rounded-lg px-8 py-3 text-base md:text-lg">Log in</button>
-      </div>
-    )}
-          <Insights/>
-          <BusinessCategory/>
+          <div className=" space-y-9 lg:space-y-12">
+          <Insights isLoggedIn={isLoggedIn}/>
+          <BusinessCategory isLoggedIn={isLoggedIn}/>
           <div className="">
           <h2 className="gap-3.5 flex items-center text-2xl font-bold font-satoshi ">
     <PiClockCountdownLight className="w-6 h-6" />
     Past Brands & Industries Featured
   </h2>
-          <div className="flex flex-wrap gap-3.5 mt-6 lg:mt-7">
+          <div className={`${!isLoggedIn ? "min-h-60" : "min-h-0"} flex relative flex-wrap gap-3.5 mt-6 lg:mt-7`}>
        {["Automotive OEMs","Premium Retail","Real Estate Developers","Telecom & Devices","Banks & Fintech"].map((item, index)=><div key={index}  className="flex-wrap py-[1.125rem] px-6 bg-white text-center shrink-0  rounded-full border border-[#EEEEEE] font-medium font-satoshi text-base">
           {item}
         </div>)}
+         {!isLoggedIn && (
+      <div className="absolute z-10 w-full h-full min-h-28 flex flex-col items-center justify-center bg-[#0000000D] backdrop-blur-md  px-4 py-8">
+        <h3 className="font-bold font-satoshi text-center text-lg md:text-2xl mb-2">Log in to view all Insights</h3>
+        <p className="text-[#6B7280] text-center text-sm md:text-base mb-5">Bunch of Public insights backed by Data at your Fingertips</p>
+        <button className="bg-brand text-white font-bold font-satoshi rounded-lg px-8 py-3 text-base md:text-lg">Log in</button>
       </div>
+    )}
+      </div>
+      
           </div>
-          <Pointstoconsider/>
-          <Productmap/>
-          <TargetAudience/>
-          <Marketfriendly/>
+          <Pointstoconsider isLoggedIn={isLoggedIn}/>
+          <Productmap isLoggedIn={isLoggedIn}/>
+          <TargetAudience isLoggedIn={isLoggedIn}/>
+          <Marketfriendly isLoggedIn={isLoggedIn}/>
           </div>
           <ProductFAQ/>
           </div>

@@ -4,7 +4,7 @@ import bulb from "../../../public/bulb.svg";
 import { FaStar } from "react-icons/fa";
 import { IoIosPeople } from "react-icons/io";
 
-const Insights = () => {
+const Insights = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   return (
     <>
       <div>
@@ -12,7 +12,7 @@ const Insights = () => {
           <Image src={bulb} alt="bulb " className="w-6 h-6" />
           MediaDazz Insights
         </h2>
-        <div className="mt-6 lg:mt-7 border-[#EEEEEE] border rounded-2xl">
+        <div className={`${!isLoggedIn ? "min-h-60" : "min-h-0"} relative mt-6 lg:mt-7 border-[#EEEEEE] border rounded-2xl`}>
           <div className="px-6 py-[1.125rem] border-b border-[#EEEEEE] flex items-center gap-2.5">
             <FaStar className="text-brand w-4" />
             <h4 className="font-medium font-satoshi text-base">
@@ -31,13 +31,20 @@ const Insights = () => {
               Consistent traffic flow ensures repeated exposures
             </h4>
           </div>
+            {!isLoggedIn && (
+      <div className="absolute z-10 w-full h-full top-0 left-0 min-h-28 flex flex-col items-center justify-center bg-[#0000000D] backdrop-blur-md  px-4 py-8">
+        <h3 className="font-bold font-satoshi text-center text-lg md:text-2xl mb-2">Log in to view all Insights</h3>
+        <p className="text-[#6B7280] text-center text-sm md:text-base mb-5">Bunch of Public insights backed by Data at your Fingertips</p>
+        <button className="bg-brand text-white font-bold font-satoshi rounded-lg px-8 py-3 text-base md:text-lg">Log in</button>
+      </div>
+    )}
         </div>
       </div>
       <h2 className="gap-3.5 flex items-center text-2xl font-bold font-satoshi ">
         <IoIosPeople className="w-6 h-6" />
         Who You’ll Reach Most Effectively
       </h2>
-      <div className="mt-6 lg:mt-7 flex flex-wrap gap-3 lg:gap-3.5 ">
+      <div className={`${!isLoggedIn ? "min-h-60" : "min-h-0"} relative mt-6 lg:mt-7 flex flex-wrap gap-3 lg:gap-3.5 `}>
         <div className="py-[1.125rem] px-6 bg-white rounded-full border border-[#EEEEEE] font-medium font-satoshi text-base">
           Commuters
         </div>
@@ -50,6 +57,13 @@ const Insights = () => {
          <div className="py-[1.125rem] px-6 bg-white rounded-full border border-[#EEEEEE] font-medium font-satoshi text-base">
          Tourists
         </div>
+         {!isLoggedIn && (
+      <div className="absolute z-10 w-full h-full top-0 left-0 min-h-28 flex flex-col items-center justify-center bg-[#0000000D] backdrop-blur-md  px-4 py-8">
+        <h3 className="font-bold font-satoshi text-center text-lg md:text-2xl mb-2">Log in to view all Insights</h3>
+        <p className="text-[#6B7280] text-center text-sm md:text-base mb-5">Bunch of Public insights backed by Data at your Fingertips</p>
+        <button className="bg-brand text-white font-bold font-satoshi rounded-lg px-8 py-3 text-base md:text-lg">Log in</button>
+      </div>
+    )}
       </div>
     </>
   );

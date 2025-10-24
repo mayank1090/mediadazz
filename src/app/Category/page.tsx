@@ -1,5 +1,8 @@
 "use client"
 
+import 'leaflet/dist/leaflet.css'                // <-- added
+import L from 'leaflet'                         // <-- added
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet' // <-- added
 import { LuSearch } from 'react-icons/lu'
 import { HiOutlineArrowsUpDown } from "react-icons/hi2";
 import { useState, useRef, useEffect } from 'react';
@@ -14,8 +17,53 @@ import Filteroptions from '@/components/Category/Filteroptions';
 import CategoryCatalogue from '@/components/Category/CategoryCatalogue';
 import Listingcarousel from '@/components/listingcarousel';
 import UpperSearch from '@/components/ProductDetail/upperSearch';
+import firstimage from "../../../public/first.svg";
+import HeartButton from '@/components/HeartButton'
+import { LuUserRound } from "react-icons/lu";
+import CartButton from '@/components/CartButton'
+import { LiaCarSolid } from "react-icons/lia";
+import mapmarkerinactive from "../../../public/mapmarkerinactive.png"
+import mapmarkeractive from "../../../public/mapmarkeractive.png"
+import { TbMapSearch } from "react-icons/tb";
+  
+  // Fix default marker icons (same as productmap)
+  delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: () => string })._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+  });
+  
+// create image icons (use .src from imported StaticImageData)
+const inactiveIcon = L.icon({
+  iconUrl: (mapmarkerinactive as any).src ?? '/mapmarkerinactive.png',
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -36],
+  className: 'map-marker-inactive'
+});
 
+const activeIcon = L.icon({
+  iconUrl: (mapmarkeractive as any).src ?? '/mapmarkeractive.png',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -40],
+  className: 'map-marker-active'
+});
 
+// Add lat/lng to Listing type and sample listings
+type Listing = {
+  id: number;
+  title: string;
+  category?: string;
+  audience?: string;
+  reach?: string;
+  left?: string; // percent (kept for compatibility)
+  top?: string;  // percent
+  img?: string;
+  lat: number;    // <-- added
+  lng: number;    // <-- added
+};
 
 export default function CategoryPage () {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -23,8 +71,19 @@ export default function CategoryPage () {
   const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+   const [cartOpen, setCartOpen] = useState(false);
 
+  // NEW: map / listings state
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [hoveredListingId, setHoveredListingId] = useState<number | null>(null);
+  const [activeListingId, setActiveListingId] = useState<number | null>(null);
 
+  const listings: Listing[] = [
+    { id: 1, title: 'Mirdif city center Rd.- Tripoli', category: 'Billboards', audience: 'Students, Tourists, Shoppers …', reach: '5,00,000 cars / day', left: '45%', top: '22%', img: outdoor, lat: 25.2067, lng: 55.2793 },
+    { id: 2, title: 'City Center Bridge', category: 'Billboards', audience: 'Commuters, Travelers', reach: '3,50,000 cars / day', left: '60%', top: '42%', img: outdoor, lat: 25.2090, lng: 55.2735 },
+    { id: 3, title: 'Downtown Corner', category: 'Unipole', audience: 'Shoppers, Diners', reach: '2,00,000 cars / day', left: '30%', top: '60%', img: outdoor, lat: 25.2050, lng: 55.2670 },
+    // add more sample listings or fetch dynamically
+  ];
 
   const sortOptions = [
     'Featured',
@@ -66,6 +125,21 @@ export default function CategoryPage () {
       console.log("Breadcrumb/Category Section unmounted");
     };
   }, []);
+
+  // create a custom marker icon (uses an inline styled div)
+  const customIcon = L.divIcon({
+    className: '', // remove default leaflet styles so our html is used as-is
+    html: `<div style="
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: #111827;
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    "></div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28], // point of the icon which will correspond to marker location
+  });
 
   return (
     <div>
@@ -115,8 +189,6 @@ export default function CategoryPage () {
             <p className="font-satoshi text-xs md:text-sm text-[#6B7280] font-medium">Home</p>
             <MdOutlineKeyboardArrowRight className='w-3 h-3 md:h-4 md:w-4'/>
             <p className="font-satoshi text-xs md:text-sm text-[#6B7280] font-medium">Outdoor & OOH Media</p>
-            {/* <MdOutlineKeyboardArrowRight className='w-3 h-3 md:h-4 md:w-4'/>
-            <p className="font-satoshi text-xs md:text-sm text-[#6B7280] font-medium">LED Unipole</p> */}
         </div>
         <div className="mt-8 md:flex gap-6 justify-between items-center">
             <div className="flex gap-[1.125rem] lg:gap-6 items-center">
@@ -129,32 +201,25 @@ export default function CategoryPage () {
                 </div>
             </div>
 
-
-
           <div className="flex mt-6 md:mt-0 gap-2 items-center">  
+            <button
+              onClick={() => { setActiveListingId(null); setIsMapOpen(true); }}
+               className='rounded-lg border-[#EEEEEE] bg-white border px-3 py-2 md:px-4 md:py-3 flex items-center gap-2 shadow-sm'
+               aria-label="View on maps"
+             >
+               <TbMapSearch className="w-4 h-4 md:h-6 md:w-6 text-gray-700" />
+               <span className='text-sm md:text-base font-medium font-satoshi'>View on maps</span>
+             </button>
+
             <button 
-                    //   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className='rounded-lg border-[#EEEEEE] bg-white border px-2 py-2 md:px-3.5 md:py-3 flex items-center gap-1 md:gap-3'
-                    >
-                     
-                        <span className='text-sm md:text-base font-medium font-satoshi'>View all</span>
-                     
-                      <div className='ml-auto'>
-                        <IoIosArrowDown className='md:w-5 md:h-5 w-3 h-3' />
-                      </div>
-                    </button >
-                      <button 
-                    //   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                     onClick={() => setIsFilterOpen(true)}
-                      className='rounded-lg md:hidden border-[#EEEEEE] bg-white border px-2 py-2 md:px-3.5 md:py-3 flex items-center gap-1 md:gap-3'
-                    >
-                     
-                        <span className='text-sm md:text-base font-medium font-satoshi'>Filter</span>
-                     
-                      <div className='ml-auto'>
-                        <IoIosArrowDown className='md:w-5 md:h-5 w-3 h-3' />
-                      </div>
-                    </button>
+             onClick={() => setIsFilterOpen(true)}
+              className='rounded-lg md:hidden border-[#EEEEEE] bg-white border px-2 py-2 md:px-3.5 md:py-3 flex items-center gap-1 md:gap-3'
+            >
+                <span className='text-sm md:text-base font-medium font-satoshi'>Filter</span>
+              <div className='ml-auto'>
+                <IoIosArrowDown className='md:w-5 md:h-5 w-3 h-3' />
+              </div>
+            </button>
         </div>
         </div>
 
@@ -168,6 +233,124 @@ export default function CategoryPage () {
         </div>
        </div>
     </div>
+
+    {/* NEW: Map overlay that highlights multiple listings and shows hover card */}
+    {isMapOpen && (
+      <div className="fixed inset-0 z-[120] flex items-start justify-center">
+        {/* dim background */}
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={() => { setIsMapOpen(false); setActiveListingId(null); }}
+        />
+
+        {/* Map container */}
+        <div className="relative w-[95vw] h-[85vh] mt-12 bg-white rounded-lg shadow-2xl overflow-hidden">
+          {/* Close */}
+          <button
+            className="absolute right-4 top-4 z-40 h-8 w-8 bg-white flex items-center justify-center rounded-full shadow"
+            onClick={() => { setIsMapOpen(false); setActiveListingId(null); }}
+            aria-label="Close map"
+          >
+            ×
+          </button>
+
+          {/* REAL Leaflet map (uses listings[].lat / listings[].lng) */}
+          <div className="absolute inset-0">
+            {/*
+              MapContainer must be rendered client-side (page is "use client").
+              Markers show Popup on hover (openPopup / closePopup) and on click we set activeListingId.
+            */}
+            <MapContainer
+              center={[listings[0].lat, listings[0].lng]}
+              zoom={14}
+              style={{ height: '100%', width: '100%' }}
+              className="z-0"
+              key={`map-${isMapOpen ? 'open' : 'closed'}`}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+
+              {listings.map((l) => {
+                return (
+                  <Marker
+                    key={l.id}
+                    position={[l.lat, l.lng]}
+                    // choose icon depending on whether this marker is active (clicked)
+                    icon={activeListingId === l.id ? activeIcon : inactiveIcon}
+                    eventHandlers={{
+                      // remove mouseover/mouseout so popup does NOT show on hover
+                      click: () => {
+                        // clicking marker will open its Popup by default
+                        // use activeListingId for any additional UI state you need
+                        setActiveListingId((cur) => (cur === l.id ? null : l.id));
+                      },
+                    }}
+                  >
+                    <Popup offset={[0, -10]}>
+                      {/* existing popup card content */}
+                      <div
+                        className=" flex flex-col  cursor-pointer lg:mt-0 rounded-tr-[0.875rem] rounded-tl-[0.875rem] overflow-hidden  w-[302px]"
+                      >
+                        <div className="w-full relative overflow-hidden ">
+                          <Image
+                            width={100}
+                            height={100}
+                            src={firstimage}
+                            alt="Featured listing"
+                            className="w-full h-[235px] max-h-full object-cover object-center"
+                          />
+                          <HeartButton itemId={`billboard-${l.id}`} />
+                        </div>
+                        <div className="flex flex-col">
+                          <div className="py-4 px-6 flex-1 shrink-0  border border-[#EEEEEE] border-t-0 gap-2">
+                            <h4 className="font-satoshi font-medium text-[10px] text-brand">
+                              {l.category ?? 'Outdoor & OOH Media'}
+                            </h4>
+                            <h3 className="font-satoshi font-bold text-base mt-2">
+                              {l.title ?? 'Static Billboard'}
+                            </h3>
+                          </div>
+                          <div className="px-6 py-2.5 border border-[#EEEEEE] border-t-0">
+                            <p className="font-medium !my-0 font-satoshi text-xs text-[#6B7280]">
+                              Audience
+                            </p>
+                            <div className="flex mt-1.5 gap-2.5 items-center">
+                              <div className="p-1.5  h-6 w-6 flex justify-center items-center bg-[#EEEEEE] rounded-full">
+                                <LuUserRound className="w-[1.125rem] h-[1.125rem]" />
+                              </div>
+                              <span className="font-bold text-sm font-satoshi truncate block max-w-full">
+                                {l.audience ?? 'Commuters, Drivers'}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="px-6 py-3 border flex justify-between items-center  border-[#EEEEEE] border-t-0 rounded-bl-[0.7875rem] rounded-br-[0.7875rem]">
+                            <div className="flex gap-2 items-center">
+                              <div className=" h-6 w-6 flex justify-center items-center bg-[#EEEEEE] rounded-full">
+                                <LiaCarSolid className="w-[1.125rem] h-[1.125rem]" />
+                              </div>
+                              <p className="font-bold !my-0 text-sm font-satoshi">
+                                {'1000'}
+                                <span className="font-medium font-satoshi text-xs ml-2 text-[#6B7280]">
+                                  Cars / day
+                                </span>
+                              </p>
+                            </div>
+                            <CartButton setCartOpen={setCartOpen} />
+                          </div>
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )
+              })}
+            </MapContainer>
+          </div>
+        </div>
+      </div>
+    )}
+
     {isFilterOpen && (
   <div className="fixed inset-0 z-[100] flex md:hidden">
     {/* Overlay */}
