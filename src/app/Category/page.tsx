@@ -36,7 +36,7 @@ import { TbMapSearch } from "react-icons/tb";
   
 // create image icons (use .src from imported StaticImageData)
 const inactiveIcon = L.icon({
-  iconUrl: (mapmarkerinactive as any).src ?? '/mapmarkerinactive.png',
+  iconUrl: '/mapmarkerinactive.png',
   iconSize: [36, 36],
   iconAnchor: [18, 36],
   popupAnchor: [0, -36],
@@ -44,7 +44,7 @@ const inactiveIcon = L.icon({
 });
 
 const activeIcon = L.icon({
-  iconUrl: (mapmarkeractive as any).src ?? '/mapmarkeractive.png',
+  iconUrl: '/mapmarkeractive.png',
   iconSize: [40, 40],
   iconAnchor: [20, 40],
   popupAnchor: [0, -40],
