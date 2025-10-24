@@ -1,8 +1,29 @@
 "use client"
 
 import 'leaflet/dist/leaflet.css'                // <-- added
-import L from 'leaflet'                         // <-- added
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet' // <-- added
+import dynamic from "next/dynamic";
+
+// Replace direct imports with dynamic import
+const MapContainer = dynamic(
+  () => import("react-leaflet").then(mod => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then(mod => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then(mod => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(
+  () => import("react-leaflet").then(mod => mod.Popup),
+  { ssr: false }
+);
+
+// Also import Leaflet dynamically if you use it directly
+const L = typeof window !== "undefined" ? require("leaflet") : null;
+
 import { LuSearch } from 'react-icons/lu'
 import { HiOutlineArrowsUpDown } from "react-icons/hi2";
 import { useState, useRef, useEffect } from 'react';
