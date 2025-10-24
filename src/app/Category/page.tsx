@@ -56,7 +56,6 @@ export default function CategoryPage () {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
    const [isMapOpen, setIsMapOpen] = useState(false);
 
-  const [L, setL] = useState<typeof Leaflet | null>(null);
   const [inactiveIcon, setInactiveIcon] = useState<Leaflet.Icon | null>(null);
   const [activeIcon, setActiveIcon] = useState<Leaflet.Icon | null>(null);
 
@@ -111,7 +110,7 @@ export default function CategoryPage () {
     (async () => {
       const leaflet = await import('leaflet');
       // Fix default marker icons
-      delete (leaflet.Icon.Default.prototype as any)._getIconUrl;
+      delete (leaflet.Icon.Default.prototype as { _getIconUrl?: unknown })._getIconUrl;
       leaflet.Icon.Default.mergeOptions({
         iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
         iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -135,7 +134,7 @@ export default function CategoryPage () {
         className: 'map-marker-active'
       }));
 
-      setL(leaflet);
+      // setL(leaflet); // Remove this line
     })();
   }, []);
 
