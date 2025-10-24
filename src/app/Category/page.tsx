@@ -22,7 +22,7 @@ const Popup = dynamic(
 );
 
 // Also import Leaflet dynamically if you use it directly
-const L = typeof window !== "undefined" ? require("leaflet") : null;
+// const L = typeof window !== "undefined" ? require("leaflet") : null;
 
 import { LuSearch } from 'react-icons/lu'
 import { HiOutlineArrowsUpDown } from "react-icons/hi2";
