@@ -55,9 +55,12 @@ export default function CategoryPage () {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
    const [isMapOpen, setIsMapOpen] = useState(false);
+   const [CartOpen, setCartOpen] = useState(false)
 
   const [inactiveIcon, setInactiveIcon] = useState<Leaflet.Icon | null>(null);
   const [activeIcon, setActiveIcon] = useState<Leaflet.Icon | null>(null);
+
+  const [activeListingId, setActiveListingId] = useState<number | null>(null);
 
   const listings = [
     { id: 1, title: 'Mirdif city center Rd.- Tripoli', category: 'Billboards', audience: 'Students, Tourists, Shoppers …', reach: '5,00,000 cars / day', left: '45%', top: '22%', img: outdoor, lat: 25.2067, lng: 55.2793 },
@@ -274,7 +277,11 @@ export default function CategoryPage () {
                   <Marker
                     key={l.id}
                     position={[l.lat, l.lng]}
-                    icon={activeListingId === l.id ? activeIcon : inactiveIcon}
+                    icon={
+                      activeListingId === l.id
+                        ? activeIcon ?? undefined
+                        : inactiveIcon ?? undefined
+                    }
                     eventHandlers={{
                       // remove mouseover/mouseout so popup does NOT show on hover
                       click: () => {
