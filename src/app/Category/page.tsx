@@ -2,6 +2,7 @@
 
 import 'leaflet/dist/leaflet.css'                // <-- added
 import dynamic from "next/dynamic";
+import type * as Leaflet from 'leaflet';
 
 // Replace direct imports with dynamic import
 const MapContainer = dynamic(
@@ -53,18 +54,13 @@ export default function CategoryPage () {
   const [isMounted, setIsMounted] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-   const [cartOpen, setCartOpen] = useState(false);
+   const [isMapOpen, setIsMapOpen] = useState(false);
 
-  // NEW: map / listings state
-  const [isMapOpen, setIsMapOpen] = useState(false);
-  const [hoveredListingId, setHoveredListingId] = useState<number | null>(null);
-  const [activeListingId, setActiveListingId] = useState<number | null>(null);
+  const [L, setL] = useState<typeof Leaflet | null>(null);
+  const [inactiveIcon, setInactiveIcon] = useState<Leaflet.Icon | null>(null);
+  const [activeIcon, setActiveIcon] = useState<Leaflet.Icon | null>(null);
 
-  const [L, setL] = useState<any>(null);
-  const [inactiveIcon, setInactiveIcon] = useState<any>(null);
-  const [activeIcon, setActiveIcon] = useState<any>(null);
-
-  const listings: Listing[] = [
+  const listings = [
     { id: 1, title: 'Mirdif city center Rd.- Tripoli', category: 'Billboards', audience: 'Students, Tourists, Shoppers …', reach: '5,00,000 cars / day', left: '45%', top: '22%', img: outdoor, lat: 25.2067, lng: 55.2793 },
     { id: 2, title: 'City Center Bridge', category: 'Billboards', audience: 'Commuters, Travelers', reach: '3,50,000 cars / day', left: '60%', top: '42%', img: outdoor, lat: 25.2090, lng: 55.2735 },
     { id: 3, title: 'Downtown Corner', category: 'Unipole', audience: 'Shoppers, Diners', reach: '2,00,000 cars / day', left: '30%', top: '60%', img: outdoor, lat: 25.2050, lng: 55.2670 },
@@ -142,21 +138,6 @@ export default function CategoryPage () {
       setL(leaflet);
     })();
   }, []);
-
-  // create a custom marker icon (uses an inline styled div)
-  const customIcon = L?.divIcon({
-    className: '',
-    html: `<div style="
-      width: 28px;
-      height: 28px;
-      border-radius: 8px;
-      background: #111827;
-      border: 2px solid #ffffff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    "></div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28], // point of the icon which will correspond to marker location
-  });
 
   return (
     <div>
