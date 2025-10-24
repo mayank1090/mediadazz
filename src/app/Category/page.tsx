@@ -47,45 +47,6 @@ import mapmarkerinactive from "../../../public/mapmarkerinactive.png"
 import mapmarkeractive from "../../../public/mapmarkeractive.png"
 import { TbMapSearch } from "react-icons/tb";
   
-  // Fix default marker icons (same as productmap)
-  delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: () => string })._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  });
-  
-// create image icons (use .src from imported StaticImageData)
-const inactiveIcon = L.icon({
-  iconUrl: '/mapmarkerinactive.png',
-  iconSize: [36, 36],
-  iconAnchor: [18, 36],
-  popupAnchor: [0, -36],
-  className: 'map-marker-inactive'
-});
-
-const activeIcon = L.icon({
-  iconUrl: '/mapmarkeractive.png',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-  popupAnchor: [0, -40],
-  className: 'map-marker-active'
-});
-
-// Add lat/lng to Listing type and sample listings
-type Listing = {
-  id: number;
-  title: string;
-  category?: string;
-  audience?: string;
-  reach?: string;
-  left?: string; // percent (kept for compatibility)
-  top?: string;  // percent
-  img?: string;
-  lat: number;    // <-- added
-  lng: number;    // <-- added
-};
-
 export default function CategoryPage () {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState('Featured');
@@ -98,6 +59,10 @@ export default function CategoryPage () {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [hoveredListingId, setHoveredListingId] = useState<number | null>(null);
   const [activeListingId, setActiveListingId] = useState<number | null>(null);
+
+  const [L, setL] = useState<any>(null);
+  const [inactiveIcon, setInactiveIcon] = useState<any>(null);
+  const [activeIcon, setActiveIcon] = useState<any>(null);
 
   const listings: Listing[] = [
     { id: 1, title: 'Mirdif city center Rd.- Tripoli', category: 'Billboards', audience: 'Students, Tourists, Shoppers …', reach: '5,00,000 cars / day', left: '45%', top: '22%', img: outdoor, lat: 25.2067, lng: 55.2793 },
@@ -114,8 +79,6 @@ export default function CategoryPage () {
     'Most Popular',
     'Rating'
   ];
-
-  
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -147,9 +110,42 @@ export default function CategoryPage () {
     };
   }, []);
 
+  useEffect(() => {
+    // Only run on client
+    (async () => {
+      const leaflet = await import('leaflet');
+      // Fix default marker icons
+      delete (leaflet.Icon.Default.prototype as any)._getIconUrl;
+      leaflet.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      });
+
+      // create image icons
+      setInactiveIcon(leaflet.icon({
+        iconUrl: '/mapmarkerinactive.png',
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+        popupAnchor: [0, -36],
+        className: 'map-marker-inactive'
+      }));
+
+      setActiveIcon(leaflet.icon({
+        iconUrl: '/mapmarkeractive.png',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40],
+        className: 'map-marker-active'
+      }));
+
+      setL(leaflet);
+    })();
+  }, []);
+
   // create a custom marker icon (uses an inline styled div)
-  const customIcon = L.divIcon({
-    className: '', // remove default leaflet styles so our html is used as-is
+  const customIcon = L?.divIcon({
+    className: '',
     html: `<div style="
       width: 28px;
       height: 28px;
@@ -298,7 +294,6 @@ export default function CategoryPage () {
                   <Marker
                     key={l.id}
                     position={[l.lat, l.lng]}
-                    // choose icon depending on whether this marker is active (clicked)
                     icon={activeListingId === l.id ? activeIcon : inactiveIcon}
                     eventHandlers={{
                       // remove mouseover/mouseout so popup does NOT show on hover
