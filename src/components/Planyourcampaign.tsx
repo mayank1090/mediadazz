@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useState } from 'react';
 import { countryDialCodes } from '../data/countryDialCodes';
-import { DateRange } from 'react-date-range';
+import { DateRange, RangeKeyDict } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import * as Yup from 'yup';
@@ -323,9 +323,12 @@ export default function Planyourcampaign() {
                                   endDate: endDate || new Date(),
                                   key: 'selection',
                                 }]}
-                                onChange={(ranges: { selection: { startDate: Date; endDate: Date } }) => {
-                                  form.setFieldValue('campaign_start_duration', formatLocalDate(ranges.selection.startDate));
-                                  form.setFieldValue('campaign_end_duration', formatLocalDate(ranges.selection.endDate));
+                                onChange={(rangesByKey: RangeKeyDict) => {
+                                  const selection = rangesByKey.selection;
+                                  if (selection) {
+                                    form.setFieldValue('campaign_start_duration', formatLocalDate(selection.startDate));
+                                    form.setFieldValue('campaign_end_duration', formatLocalDate(selection.endDate));
+                                  }
                                 }}
                                 moveRangeOnFirstSelection={false}
                                 editableDateInputs={true}
