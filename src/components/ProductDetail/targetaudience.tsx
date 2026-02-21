@@ -60,7 +60,8 @@ const TargetAudience = ({ isLoggedIn, targetAudienceList = [] }: TargetAudienceP
   </h2>
    <div className={`mt-6 lg:mt-7 gap-3.5 grid grid-cols-1 lg:grid-cols-2 ${!isLoggedIn ? "min-h-60" : "min-h-0"} relative`}>
   { targetAudienceList?.map((item, index) => {
-    const audience = item.audience || item.title || 'Audience';
+    const audienceRaw = item.audience || item.title || 'Audience';
+    const audience = typeof audienceRaw === 'string' ? audienceRaw : String(audienceRaw);
     return (
       <div key={index} className="py-3 px-5  border border-[#EEEEEE] bg-white rounded-[0.625rem] flex items-center gap-4 lg:gap-[1.125rem]">
        <div className="p-2.5 rounded-full overflow-hidden shrink-0">
@@ -68,9 +69,9 @@ const TargetAudience = ({ isLoggedIn, targetAudienceList = [] }: TargetAudienceP
        </div>
        <div className="">
        <h3 className="pb-1 font-satoshi font-bold text-sm ">{audience}</h3>
-        {item.description && (
-          <p className=" font-satoshi text-sm text-[#6B7280] ">{item.description}</p>
-        )}
+        {typeof item.description === 'string' || typeof item.description === 'number' ? (
+  <p>{item.description}</p>
+) : null}
        </div>
       </div>
     );
