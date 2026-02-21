@@ -28,14 +28,14 @@ export const authApi = createApi({
         body: formData,
       }),
     }),
-    getUserDetails: builder.mutation<{ status: boolean; msg: string; user?: Record<string, unknown> }, FormData>({
+    getUserDetails: builder.mutation<{ status: string; msg: string; user?: Record<string, unknown> }, FormData>({
       query: (formData) => ({
         url: 'getuserdetails',
         method: 'POST',
         body: formData,
       }),
     }),
-    updateUserDetails: builder.mutation<{ status: boolean; msg: string }, FormData>({
+    updateUserDetails: builder.mutation<{ status: string; msg: string }, FormData>({
       query: (formData) => ({
         url: 'updateuserdetails',
         method: 'POST',
