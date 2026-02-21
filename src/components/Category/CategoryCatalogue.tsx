@@ -41,7 +41,7 @@ const CategoryCatalogue = ({ listings }: CategoryCatalogueProps) => {
           onClick={() => router.push(`/productdetail/${listing.listing_url}`)}
         />
          <WishlistHeartButton 
-           isInWishlist={(listing as any)?.is_wishlist || false} 
+           isInWishlist={listing?.is_wishlist || false} 
            productId={listing.listing_url || ""} 
          />
         </div>
@@ -92,7 +92,7 @@ const CategoryCatalogue = ({ listings }: CategoryCatalogueProps) => {
        <p className="text-sm font-medium font-satoshi">Price on Request</p>
         </div>
 
-        <CartButton product_id={(listing as any)?.listing_product_id || listing.listing_url || ""} />
+        <CartButton product_id={listing?.listing_product_id || listing.listing_url || ""} />
        </div>
         </div>
         </div>

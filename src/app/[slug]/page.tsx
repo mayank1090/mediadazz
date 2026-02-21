@@ -384,7 +384,7 @@ export default function CategoryPage () {
                 <CategoryCatalogue listings={categoryData?.product_list?.listings || []} />
               </div>
               <div className="lg:hidden">
-                <Listingcarousel listings={categoryData?.product_list?.listings as any || []} />
+                <Listingcarousel listings={categoryData?.product_list?.listings || []} />
               </div>
               {categoryData && categoryData.total_pages > 1 && (
                 <div className="mt-8 flex justify-end">
