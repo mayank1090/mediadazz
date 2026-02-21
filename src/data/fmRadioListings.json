@@ -1,0 +1,309 @@
+{
+  "total_count": 20,
+  "product_list": {
+    "status": "true",
+    "listings": [
+      {
+        "listing_title": "Dubai Eye 103.8",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/a227baf5f08e2355b284c0980c7f1108.JPG",
+        "listing_url": "dubai-eye-1038",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "English FM",
+        "listing_sku": null,
+        "listing_description": "Dubai Eye 103.8 is Dubai's premier news, talk, and sports radio station. The station provides compre...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "1,40,000",
+          "reach_type": "Viewers",
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Dubai Dragon",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/d16a69d77e071dacb4578abede09f9fb.JPG",
+        "listing_url": "dubai-dragon",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "Chinese FM",
+        "listing_sku": null,
+        "listing_description": "Dubai Dragon is the UAE's first and only dedicated Chinese radio station, broadcasting 24 hours a da...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "",
+          "reach_type": null,
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Beat 97.8",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/d2391cb73e02e1396389d507e29ee03e.JPG",
+        "listing_url": "beat-978",
+        "listing_category": "FM Radio",
+        "listing_subcategory": null,
+        "listing_sku": null,
+        "listing_description": "Beat 97.8 FM UAE, formerly known as Dance 97.8 FM, is Dubai's leading dance music station. It keeps ...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "",
+          "reach_type": null,
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Big 106.2",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/8c32462b48010b32cb03fdeea6033d5e.JPG",
+        "listing_url": "big-1062",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "English FM",
+        "listing_sku": null,
+        "listing_description": "Big 106.2 is UAE's first radio station, playing a key role in the evolution of radio in the countr...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "3,00,000",
+          "reach_type": "Listeners",
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Virgin Radio Dubai 104.4",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/6ad1e1032e1855c112207167d29b7ab0.JPG",
+        "listing_url": "virgin-radio-dubai-1044",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "English FM",
+        "listing_sku": null,
+        "listing_description": "Virgin Radio Dubai 104.4 is the UAE's Number 1 Hit Music Station, featuring the Kris Fade Show. It...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "",
+          "reach_type": null,
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Dubai 92",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/77d93a00b6cdb9b2ee51a18270d303bd.JPG",
+        "listing_url": "dubai-92",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "English FM",
+        "listing_sku": null,
+        "listing_description": "Dubai 92 is Dubai's longest-running English music station, focused on young families. It plays Dub...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "3,50,000",
+          "reach_type": "Listeners",
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "City 101.6",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/8878cb8e412dd3096797d28216c4ec2f.JPG",
+        "listing_url": "city-1016",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "Hindi FM",
+        "listing_sku": null,
+        "listing_description": "City 101.6, with the largest number of listeners, caters to an aspirational audience, blending cool ...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "3,20,000",
+          "reach_type": "Listeners",
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Al Oula Radio 107.4",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/7c86f702ee534dbd0dce8bcfa043de99.JPG",
+        "listing_url": "al-oula-radio-1074",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "Arabic FM",
+        "listing_sku": null,
+        "listing_description": "Al Oula Radio 107.4, an initiative of Hamdan Bin Mohammed Heritage Center, is the first radio statio...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "2,50,000",
+          "reach_type": "Listeners",
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Hit 96.7",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/605619f282f314cfc0e9c6094bf87634.JPG",
+        "listing_url": "hit-967",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "Malayalam FM",
+        "listing_sku": null,
+        "listing_description": "Hit 96.7 is the most popular 24-hour Malayalam FM station in Dubai, catering to the expat Keralite c...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "3,63,000",
+          "reach_type": "Listeners",
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      },
+      {
+        "listing_title": "Channel 4 104.8 FM",
+        "listing_image": "https://development.mediadazz.com//upload/listing/original/6f704334f07ea84a6a393f8982f5f9a6.JPG",
+        "listing_url": "channel-4-1048-fm",
+        "listing_category": "FM Radio",
+        "listing_subcategory": "English FM",
+        "listing_sku": null,
+        "listing_description": "Channel 4 104.8 FM offers a mix of the latest music, significant prize giveaways, and updates on ent...",
+        "listing_list": {
+          "locality": null,
+          "reach_count": "4,20,000",
+          "reach_type": "Listeners",
+          "display": "",
+          "size": "",
+          "city": "Dubai",
+          "event": null,
+          "event_date": "",
+          "broadcast": null,
+          "frequency": null,
+          "days": "1",
+          "duration": ""
+        },
+        "listing_latitude": null,
+        "listing_longitude": null
+      }
+    ]
+  },
+  "total_pages": 2,
+  "current_page": "1",
+  "sub_category_list": [
+    {
+      "sub_category_name": "English FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/English_FM_icon_.png",
+      "sub_category_slug": "english-fm"
+    },
+    {
+      "sub_category_name": "Arabic FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/Arabic_FM_icon_.png",
+      "sub_category_slug": "arabic-fm"
+    },
+    {
+      "sub_category_name": "Hindi FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/Hindi_FM_icon_.png",
+      "sub_category_slug": "hindi-fm"
+    },
+    {
+      "sub_category_name": "Tagalog FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/Tagalog_FM_icon_.png",
+      "sub_category_slug": "tagalog-fm"
+    },
+    {
+      "sub_category_name": "Malayalam FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/Malayalam_FM_icon_.png",
+      "sub_category_slug": "malayalam-fm"
+    },
+    {
+      "sub_category_name": "Russian FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/Russian_FM_icon_.png",
+      "sub_category_slug": "russian-fm"
+    },
+    {
+      "sub_category_name": "Farsi FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/Farsi_FM_icon.png",
+      "sub_category_slug": "farsi-fm"
+    },
+    {
+      "sub_category_name": "Chinese FM",
+      "sub_category_image": "https://development.mediadazz.com/upload/subcategories/icon/Chinese_FM_icon.png",
+      "sub_category_slug": "chinese-fm"
+    }
+  ]
+}
+
+
+
+
+
+
+

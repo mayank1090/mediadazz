@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
   
   // Image optimization
   images: {
-    domains:["mediadazz.com"],
+    domains:["mediadazz.com","development.mediadazz.com"],
     unoptimized: isProd, // Required for static export
     formats: ['image/webp', 'image/avif'],
   },

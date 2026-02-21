@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'leaflet/dist/leaflet.css';
 import SidebarMegaMenu from "@/components/navbar";
+import ReduxProvider from '@/providers/ReduxProvider';
 import Footer from "@/components/Footer";
 import { menuData } from "@/data/menusData";
 
@@ -101,27 +102,29 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${epilogue.variable} ${satoshi.variable} antialiased`}
       >
-        <SidebarMegaMenu
-          topLevels={menuData}
-          loginHref="/login"
-          cartHref="/cart"
-        />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
+        <ReduxProvider>
+          <SidebarMegaMenu
+            topLevels={menuData}
+            loginHref="/login"
+            cartHref="/cart"
+          />
+          <main className="min-h-screen">
+            {children}
+          </main>
+          <Footer />
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </ReduxProvider>
       </body>
     </html>
   );

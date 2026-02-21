@@ -1,48 +1,80 @@
 import React from 'react';
 import { PiTarget } from "react-icons/pi";
 
-const data=[{
-    icon:"👣",
-    heading:"Commuters",
-    discription:"Daily repetition builds frequency"
+interface TargetAudienceItem {
+  audience?: string;
+  [key: string]: any;
+}
 
-},
-{
-    icon:"💼",
-    heading:"Business travelers",
-    discription:"Route connects to key districts"
+interface TargetAudienceProps {
+  isLoggedIn: boolean;
+  targetAudienceList?: TargetAudienceItem[];
+}
 
-},
-{
-    icon:"🛍️",
-    heading:"Shoppers",
-    discription:"Proximity to malls and shops"
+// Icon mapping for different audience types
+const getAudienceIcon = (audience: string): string => {
+  const iconMap: Record<string, string> = {
+    'Commuters': '👣',
+    'Drivers': '🚗',
+    'Residents': '🏠',
+    'Shoppers': '🛍️',
+    'Tourists': '✈️',
+    'Families': '👨‍👩‍👧‍👦',
+    'Students': '🎓',
+    'Corporate Executives': '💼',
+    'Business Travelers': '💼',
+    'Parents': '👨‍👩‍👦',
+    'Health & Fitness Enthusiasts': '💪',
+    'Expatriates': '🌍',
+    'Public Transport Users': '🚌',
+    'Car Owners': '🚙',
+    'Delivery Drivers': '📦',
+    'Domestic Travellers': '🧳',
+    'Healthcare Professionals': '⚕️',
+    'Pedestrians': '🚶',
+    'Sports Enthusiasts': '⚽',
+    'Real Estate Investors': '🏘️',
+    'Technology Enthusiasts': '💻',
+    'Hotel Guests': '🏨',
+    'Event Attendees': '🎪',
+    'Small Business Owners': '🏪',
+    'Maritime Professionals': '⚓',
+    'Engineers': '🔧',
+    'Media Professionals': '📺',
+    'Software Developers and Programmers': '💻',
+  };
+  
+  return iconMap[audience] || '👥';
+};
 
-},
-{
-    icon:"🏠",
-    heading:"Residents",
-    discription:"Neighborhood coverage and recall"
-
-}]
-
-const TargetAudience = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+const TargetAudience = ({ isLoggedIn, targetAudienceList = [] }: TargetAudienceProps) => {
+  // If no data, show empty state or fallback
+  if (!targetAudienceList || targetAudienceList.length === 0) {
+    return null;
+  }
+  
   return (
     <div> <div>  <h2 className="gap-3.5 flex items-center text-2xl font-bold font-satoshi ">
     <PiTarget className="w-6 h-6" />
     Target Audience Insights
   </h2>
    <div className={`mt-6 lg:mt-7 gap-3.5 grid grid-cols-1 lg:grid-cols-2 ${!isLoggedIn ? "min-h-60" : "min-h-0"} relative`}>
-  { data?.map((item, index)=><div key={index} className="py-3 px-5  border border-[#EEEEEE] bg-white rounded-[0.625rem] flex items-center gap-4 lg:gap-[1.125rem]">
+  { targetAudienceList?.map((item, index) => {
+    const audience = item.audience || item.title || 'Audience';
+    return (
+      <div key={index} className="py-3 px-5  border border-[#EEEEEE] bg-white rounded-[0.625rem] flex items-center gap-4 lg:gap-[1.125rem]">
        <div className="p-2.5 rounded-full overflow-hidden shrink-0">
-        <p className='text-3xl font-bold'>{item?.icon}</p>
+        <p className='text-3xl font-bold'>{getAudienceIcon(audience)}</p>
        </div>
        <div className="">
-       <h3 className="pb-1 font-satoshi font-bold text-sm ">{item?.heading}</h3>
-        <p className=" font-satoshi text-sm text-[#6B7280] ">{item?.discription}</p>
-       
+       <h3 className="pb-1 font-satoshi font-bold text-sm ">{audience}</h3>
+        {item.description && (
+          <p className=" font-satoshi text-sm text-[#6B7280] ">{item.description}</p>
+        )}
        </div>
-      </div>)}
+      </div>
+    );
+  })}
        {!isLoggedIn && (
       <div className="absolute z-10 w-full h-full top-0 left-0 min-h-28 flex flex-col items-center justify-center bg-[#0000000D] backdrop-blur-md  px-4 py-8">
         <h3 className="font-bold font-satoshi text-center text-lg md:text-2xl mb-2">Log in to view all Insights</h3>

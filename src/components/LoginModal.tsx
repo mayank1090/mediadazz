@@ -1,13 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import { FiX, FiArrowLeft, FiUser, FiMail, FiBriefcase, FiUsers } from 'react-icons/fi';
 import Image from 'next/image';
 import { FaFacebook } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa6";
 import { GoDash } from "react-icons/go";
 import { toast } from 'react-toastify';
-import NavLogo from '@/images/navlogo';
+import NavLogo from '../../public/navLogo.svg';
+import Loader from './Loader';
+import { useUserLoginMutation, useVerifyOtpMutation, useUserRegisterMutation } from '@/store/authApi';
+import { countryDialCodes } from '../data/countryDialCodes';
+
+// Helper to get min/max for a dial code from countryDialCodes
+function getNumberLengthForDialCode(dialCode: string) {
+  const found = countryDialCodes.find(c => c.dial_code === dialCode);
+  return found ? { min: found.minLength, max: found.maxLength } : { min: 7, max: 15 };
+}
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -18,29 +29,73 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
   const [step, setStep] = useState<'phone' | 'otp' | 'profile'>('phone');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+971');
+  // Dynamic min/max for selected country
+  const { min: phoneMin, max: phoneMax } = getNumberLengthForDialCode(countryCode);
+  // Mobile validation: only numbers, correct length for country
+  const isPhoneValid = new RegExp(`^\\d{${phoneMin},${phoneMax}}$`).test(phoneNumber);
   const [otp, setOtp] = useState(['', '', '', '']);
   const [isVerifying, setIsVerifying] = useState(false);
   const [otpError, setOtpError] = useState(false);
+
+  // Reset modal state helper — ensures modal always starts from the phone step when opened
+  const resetModalState = () => {
+    setStep('phone');
+    setPhoneNumber('');
+    setCountryCode('+971');
+    setOtp(['', '', '', '']);
+    setIsVerifying(false);
+    setOtpError(false);
+  };
+
+  // When the modal is opened, always reset internal state so it starts from the first step
+  useEffect(() => {
+    if (isOpen) {
+      resetModalState();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
   
-  // Profile form state
-  const [profileData, setProfileData] = useState({
+  // Profile form initial state for Formik
+  const profileInitialValues = {
     fullName: '',
     companyName: '',
     designation: '',
-    email: ''
+    email: '',
+  };
+
+  const profileValidationSchema = Yup.object({
+    fullName: Yup.string().required('Full Name is required'),
+    companyName: Yup.string().required('Company Name is required'),
+    designation: Yup.string().required('Designation is required'),
+    email: Yup.string().email('Invalid email address').required('Email is required'),
   });
 
-  const handleSendOTP = () => {
-    if (phoneNumber) {
-      setStep('otp');
-      toast.success('OTP Sent Successfully!', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+  const [sendOtp, { isLoading: isSendingOtp }] = useUserLoginMutation();
+  const [verifyOtp, { isLoading: isVerifyingApi }] = useVerifyOtpMutation();
+  const [registerUser, { isLoading: isRegistering }] = useUserRegisterMutation();
+
+  const handleSendOTP = async () => {
+    if (!isPhoneValid) {
+      toast.error('Please enter a valid mobile number', { position: 'top-right' });
+      return;
+    }
+
+    try {
+      const fd = new FormData();
+      fd.append('countrycode', countryCode);
+      fd.append('mobile', phoneNumber);
+
+      const res: any = await sendOtp(fd).unwrap();
+
+      if (res?.status === 'success') {
+        setStep('otp');
+        toast.success(res.msg || 'OTP Sent Successfully!', { position: 'top-right' });
+      } else {
+        toast.error(res?.msg || 'Failed to send OTP', { position: 'top-right' });
+      }
+    } catch (err: any) {
+      console.error('sendOtp error', err);
+      toast.error(err?.data?.msg || 'Network error while sending OTP', { position: 'top-right' });
     }
   };
 
@@ -129,15 +184,31 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     }
   };
 
-  const handleResendOTP = () => {
-    toast.success('OTP Resent Successfully!', {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+  const handleResendOTP = async () => {
+    if (!isPhoneValid) {
+      toast.error('Please enter a valid mobile number', { position: 'top-right' });
+      return;
+    }
+
+    try {
+      const fd = new FormData();
+      fd.append('countrycode', countryCode);
+      fd.append('mobile', phoneNumber);
+
+      const res: any = await sendOtp(fd).unwrap();
+
+      if (res?.status === 'success') {
+        // Reset OTP fields when resending
+        setOtp(['', '', '', '']);
+        setOtpError(false);
+        toast.success(res.msg || 'OTP Resent Successfully!', { position: 'top-right' });
+      } else {
+        toast.error(res?.msg || 'Failed to resend OTP', { position: 'top-right' });
+      }
+    } catch (err: any) {
+      console.error('resendOtp error', err);
+      toast.error(err?.data?.msg || 'Network error while resending OTP', { position: 'top-right' });
+    }
   };
 
   const handleBackToPhone = () => {
@@ -147,91 +218,83 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     setIsVerifying(false);
   };
 
-  const handleProfileSubmit = () => {
-    // Validate profile data
-    if (!profileData.fullName || !profileData.companyName || !profileData.designation || !profileData.email) {
-      toast.error('Please fill in all fields', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      return;
+  // Formik submit handler for profile
+  const handleProfileSubmit = async (values: typeof profileInitialValues) => {
+    try {
+      const fd = new FormData();
+      fd.append('countrycode', countryCode);
+      fd.append('mobile', phoneNumber);
+      fd.append('name', values.fullName);
+      fd.append('companyname', values.companyName);
+      fd.append('designation', values.designation);
+      fd.append('email', values.email);
+      fd.append('token', localStorage.getItem('auth_token') || '');
+
+      const res: any = await registerUser(fd).unwrap();
+
+      if (res?.status === 'success') {
+        localStorage.setItem('useractive', 'true');
+        window.dispatchEvent(new CustomEvent('userLoginStatusChanged', { detail: { isLoggedIn: true } }));
+        toast.success(res.msg || 'Profile Completed Successfully!', { position: 'top-right' });
+        onClose();
+      } else {
+        toast.error(res?.msg || 'Registration failed', { position: 'top-right' });
+      }
+    } catch (err: any) {
+      console.error('registerUser error', err);
+      toast.error(err?.data?.msg || 'Network error while registering', { position: 'top-right' });
     }
-
-    // Store useractive in localStorage and close modal
-    localStorage.setItem('useractive', 'true');
-    
-    // Dispatch custom event to notify navbar of login status change
-    window.dispatchEvent(new CustomEvent('userLoginStatusChanged', {
-      detail: { isLoggedIn: true }
-    }));
-    
-    toast.success('Profile Completed Successfully!', {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
-    onClose();
   };
 
-  const handleProfileChange = (field: string, value: string) => {
-    setProfileData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  // Removed unused handleProfileChange and setProfileData (not defined)
 
-  const handleContinue = (otpArray?: string[]) => {
+  const handleContinue = async (otpArray?: string[]) => {
     const currentOtp = otpArray || otp;
-    console.log('handleContinue called with OTP:', currentOtp);
-    // Check if all OTP fields are filled
-    if (currentOtp.every(digit => digit !== '')) {
-      console.log('All fields filled, starting verification...');
-      setIsVerifying(true);
-      setOtpError(false);
-      
-      // Simulate API call delay
-      setTimeout(() => {
-        const enteredOtp = currentOtp.join('');
-        
-        if (enteredOtp === '1111') {
-          // Correct OTP - move to profile completion step
-          setIsVerifying(false);
-          setStep('profile');
-          toast.success('OTP Verified Successfully!', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          });
+    if (!currentOtp.every(d => d !== '')) return;
+
+    setIsVerifying(true);
+    setOtpError(false);
+
+    try {
+      const fd = new FormData();
+      fd.append('countrycode', countryCode);
+      fd.append('mobile', phoneNumber);
+      fd.append('otp', currentOtp.join(''));
+
+      const res: any = await verifyOtp(fd).unwrap();
+
+      setIsVerifying(false);
+
+      if (res?.status === 'success') {
+        // If API response indicates the user already exists, finalize login
+        // and store token instead of navigating to profile completion.
+        if (res.userdata?.status === true) {
+          // store auth token
+          if (res.token) {
+            localStorage.setItem('auth_token', res.token);
+          }
+          // mark user active and notify app
+          localStorage.setItem('useractive', 'true');
+          window.dispatchEvent(new CustomEvent('userLoginStatusChanged', { detail: { isLoggedIn: true } }));
+          toast.success(res.msg || 'Logged in successfully!', { position: 'top-right' });
+          onClose();
         } else {
-          // Incorrect OTP - show error state
-          setOtpError(true);
-          setIsVerifying(false);
-          
-          toast.error('Invalid OTP. Please try again.', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          });
-          
-          // Clear error state after 3 seconds
-        //   setTimeout(() => {
-        //     setOtpError(false);
-        //   }, 3000);
+          // New user: go to profile completion
+          if (res.token) {
+            localStorage.setItem('auth_token', res.token);
+          }
+          setStep('profile');
+          toast.success(res.msg || 'OTP Verified Successfully!', { position: 'top-right' });
         }
-      }, 2000); // 2 second delay to show loading animation
+      } else {
+        setOtpError(true);
+        toast.error(res?.msg || 'Invalid OTP. Please try again.', { position: 'top-right' });
+      }
+    } catch (err: any) {
+      setIsVerifying(false);
+      setOtpError(true);
+      console.error('verifyOtp error', err);
+      toast.error(err?.data?.msg || 'Network error while verifying OTP', { position: 'top-right' });
     }
   };
 
@@ -247,14 +310,14 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
 
       {/* Modal */}
       <div className="fixed inset-0 flex  h-screen items-center justify-center z-50 p-0 md:p-4">
-        <div className={`bg-white w-full my-4 h-full flex flex-col px-6 py-9 md:p-0 md:block ${step==="phone" || step==="profile" ?"h-full":"md:h-fit"} md:max-h-[597px] md:rounded-xl overflow-y-auto md:shadow-lg ${step==="profile"?"md:max-w-3xl":"md:max-w-[30rem]"}`}>
+        <div className={`bg-white w-full h-full md:max-h-fit my-4 flex flex-col px-6 py-9 md:p-0 md:block ${step==="phone" || step==="profile" ?"h-full":"md:h-fit"}  md:rounded-xl  md:shadow-lg ${step==="profile"?"md:max-w-3xl":"md:max-w-[30rem]"}`}>
           {/* Header */}
           {(step==="phone" || step==="otp") && (<div className='flex gap-5 items-center md:hidden mb-[2.625rem]'>
                   <button onClick={onClose} className='p-2 rounded-full bg-[#FAFAFA] border-[#EEEEEE] border'>
                     <FiArrowLeft className='w-6 h-6'/>
                     
                   </button>
-                  <NavLogo className='max-h-6'/>
+                  <Image src={NavLogo} alt='NavLogo' className='max-h-6'/>
             </div>)}
           <div className="flex justify-between md:p-9 items-start md:pb-0 ">
             {(step === 'otp' || step === 'profile') && (
@@ -285,7 +348,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
           </div>
 
           {/* Content */}
-          <div className=" md:p-9 pt-[2.625rem] flex-1  flex flex-col gap-8 justify-between">
+          <div className=" md:p-9 pt-[2.625rem] flex-1 overflow-y-scroll md:max-h-[500px] no-scrollbar  flex flex-col gap-8 justify-between">
             {step === 'phone' ? (
               <>
                 {/* Phone Step */}
@@ -299,28 +362,45 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                     <select
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
-                      className="flex-1 px-3 md:px-[1.125rem] mr-[1.125rem] py-4 max-w-[25%] text-base md:text-lg focus:outline-none "
+                      className="flex-1 px-3 pr-0 md:pr-[1.125rem] md:px-[1.125rem] mr-[1.125rem] py-4 max-w-[25%] text-base md:text-lg focus:outline-none "
                     >
-                      <option value="+971">+971</option>
-                      <option value="+1">+1</option>
-                      <option value="+91">+91</option>
-                      <option value="+44">+44</option>
+                      {countryDialCodes.map((c) => (
+                        // keep option text as dial code only so UI/design doesn't change
+                        <option key={c.code} value={c.dial_code} title={c.name}>
+                          {c.dial_code}
+                        </option>
+                      ))}
                     </select>
                     <input
                       type="tel"
+                      inputMode="numeric"
                       placeholder="Enter Mobile Number"
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      maxLength={phoneMax}
+                      onChange={(e) => {
+                        // sanitize input to digits only, and trim to max allowed
+                        let digits = e.target.value.replace(/\D/g, '');
+                        if (digits.length > phoneMax) digits = digits.slice(0, phoneMax);
+                        setPhoneNumber(digits);
+                      }}
                       className="flex-2 px-[1.125rem] py-4 border-l border-[#EEEEEE]  focus:outline-none "
                     />
                   </div>
                 </div>
+                  {/* Mobile validation error */}
+                {!isPhoneValid && phoneNumber.length > 0 && (
+                  <div className="text-red-500 text-xs mt-2 mb-2 font-medium">
+                    Enter a valid mobile number
+                  </div>
+                )}
 
                 <button
                   onClick={handleSendOTP}
                   className="w-full  text-white text-lg font-satoshi font-bold py-5 bg-brand rounded-xl  md:mb-[2.625rem]"
+                  disabled={!isPhoneValid || isSendingOtp}
+                  style={!isPhoneValid || isSendingOtp ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
                 >
-                  Send OTP
+                  {isSendingOtp ? <Loader/> : 'Send OTP'}
                 </button>
                 </div>
  
@@ -407,132 +487,152 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 </div>
 
                 {/* Verifying Status */}
-                {isVerifying ? (
+                {(isVerifying || isVerifyingApi) ? (
                   <div className="flex items-center justify-center gap-2 mb-6">
-                    <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-base font-bold font-satoshi">Verifying</span>
+                    <Loader />
                   </div>
                 ) : (
                   <div className="text-center">
                     <p className="text-base font-medium font-satoshi text-[#6B7280] mb-1">Haven't Received it yet?</p>
                     <button
                       onClick={handleResendOTP}
-                      className="text-base font-medium font-satoshi underline text-brand"
+                      disabled={isSendingOtp}
+                      className={`text-base font-medium font-satoshi underline ${isSendingOtp ? 'text-gray-400 cursor-not-allowed' : 'text-brand'}`}
                     >
-                      Resend
+                      {isSendingOtp ? 'Resending...' : 'Resend'}
                     </button>
                   </div>
                 )}
               </>
             ) : (
               <>
-                {/* Profile Completion Step */}
-                <div className="space-y-4">
-                  {/* Mobile Number (Read-only) */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-[1.125rem]">
-                  <div>
-                    <label className="block font-satoshi text-base font-medium mb-3">
-                      Mobile No.
-                    </label>
-                    <div className="flex border border-[#EEEEEE] rounded-[0.625rem] ">
-                      <div className="flex-1 px-[1.125rem] mr-[1.125rem] py-4 max-w-[25%] text-gray-600">
-                        {countryCode}
+                {/* Profile Completion Step with Formik */}
+                <Formik
+                  initialValues={profileInitialValues}
+                  validationSchema={profileValidationSchema}
+                  onSubmit={handleProfileSubmit}
+                  validateOnBlur
+                  validateOnChange
+                >
+                  {({ touched, errors, isSubmitting, handleChange, handleBlur, values }) => (
+                    <Form className="space-y-4">
+                      {/* Mobile Number (Read-only) */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-[1.125rem]">
+                        <div>
+                          <label className="block font-satoshi text-base font-medium mb-3">
+                            Mobile No.
+                          </label>
+                          <div className="flex border border-[#EEEEEE] rounded-[0.625rem] ">
+                            <div className="flex-1 px-[1.125rem] mr-[1.125rem] py-4 max-w-[25%] text-gray-600">
+                              {countryCode}
+                            </div>
+                            <div className="flex-2 px-[1.125rem] py-4 border-l border-[#EEEEEE] text-gray-600">
+                              {phoneNumber}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Full Name */}
+                        <div>
+                          <label className="block font-satoshi text-base font-medium mb-3">
+                            Full Name
+                          </label>
+                          <div className="relative">
+                            <FiUser className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
+                            <Field
+                              type="text"
+                              name="fullName"
+                              placeholder="Enter full name"
+                              className="w-full pl-12 pr-4 py-4 border border-[#EEEEEE] rounded-[0.625rem] focus:outline-none focus:border-brand"
+                            />
+                          </div>
+                          <ErrorMessage name="fullName">
+                            {msg => <div className="text-red-500 text-xs mt-1 font-medium">{msg}</div>}
+                          </ErrorMessage>
+                        </div>
+
+                        {/* Company Name */}
+                        <div>
+                          <label className="block font-satoshi text-base font-medium mb-3">
+                            Company Name
+                          </label>
+                          <div className="relative">
+                            <FiUsers className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
+                            <Field
+                              type="text"
+                              name="companyName"
+                              placeholder="Enter Company name"
+                              className="w-full pl-12 pr-4 py-4 border border-[#EEEEEE] rounded-[0.625rem] focus:outline-none focus:border-brand"
+                            />
+                          </div>
+                          <ErrorMessage name="companyName">
+                            {msg => <div className="text-red-500 text-xs mt-1 font-medium">{msg}</div>}
+                          </ErrorMessage>
+                        </div>
+
+                        {/* Designation */}
+                        <div>
+                          <label className="block font-satoshi text-base font-medium mb-3">
+                            Designation
+                          </label>
+                          <div className="relative">
+                            <FiBriefcase className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
+                            <Field
+                              as="select"
+                              name="designation"
+                              className="w-full pl-12 pr-10 py-4 border border-[#EEEEEE] text-[#6B7280] rounded-[0.625rem] focus:outline-none  focus:border-brand appearance-none bg-white"
+                            >
+                              <option className='text-[#6B7280]' value="">Enter your designation</option>
+                              <option value="CEO">CEO</option>
+                              <option value="CTO">CTO</option>
+                              <option value="Marketing Manager">Marketing Manager</option>
+                              <option value="Brand Manager">Brand Manager</option>
+                              <option value="Media Planner">Media Planner</option>
+                              <option value="Account Manager">Account Manager</option>
+                              <option value="Other">Other</option>
+                            </Field>
+                            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </div>
+                          </div>
+                          <ErrorMessage name="designation">
+                            {msg => <div className="text-red-500 text-xs mt-1 font-medium">{msg}</div>}
+                          </ErrorMessage>
+                        </div>
                       </div>
-                      <div className="flex-2 px-[1.125rem] py-4 border-l border-[#EEEEEE] text-gray-600">
-                        {phoneNumber}
+
+                      {/* Email Address */}
+                      <div>
+                        <label className="block font-satoshi mb-3 text-base font-medium ">
+                          Email Address
+                        </label>
+                        <div className="relative">
+                          <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
+                          <Field
+                            type="email"
+                            name="email"
+                            placeholder="Enter your Email Address"
+                            className="w-full pl-12 pr-4 py-4 border border-[#EEEEEE] rounded-[0.625rem] focus:outline-none focus:border-brand"
+                          />
+                        </div>
+                        <ErrorMessage name="email">
+                          {msg => <div className="text-red-500 text-xs mt-1 font-medium">{msg}</div>}
+                        </ErrorMessage>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Full Name */}
-                  <div>
-                    <label className="block font-satoshi text-base font-medium mb-3">
-                      Full Name
-                    </label>
-                    <div className="relative">
-                      <FiUser className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
-                      <input
-                        type="text"
-                        placeholder="Enter full name"
-                        value={profileData.fullName}
-                        onChange={(e) => handleProfileChange('fullName', e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 border border-[#EEEEEE] rounded-[0.625rem] focus:outline-none focus:border-brand"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Company Name */}
-                  <div>
-                    <label className="block font-satoshi text-base font-medium mb-3">
-                      Company Name
-                    </label>
-                    <div className="relative">
-                      <FiUsers className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
-                      <input
-                        type="text"
-                        placeholder="Enter Company name"
-                        value={profileData.companyName}
-                        onChange={(e) => handleProfileChange('companyName', e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 border border-[#EEEEEE] rounded-[0.625rem] focus:outline-none focus:border-brand"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Designation */}
-                  <div>
-                    <label className="block font-satoshi text-base font-medium mb-3">
-                      Designation
-                    </label>
-                    <div className="relative">
-                      <FiBriefcase className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
-                      <select
-                        value={profileData.designation}
-                        onChange={(e) => handleProfileChange('designation', e.target.value)}
-                        className="w-full pl-12 pr-10 py-4 border border-[#EEEEEE] text-[#6B7280] rounded-[0.625rem] focus:outline-none  focus:border-brand appearance-none bg-white"
+                      {/* Save Button */}
+                      <button
+                        type="submit"
+                        className="w-full text-white text-lg font-satoshi font-bold py-5 bg-brand rounded-xl mt-3.5"
+                        disabled={isRegistering || isSubmitting}
                       >
-                        <option className='text-[#6B7280]' value="">Enter your designation</option>
-                        <option value="CEO">CEO</option>
-                        <option value="CTO">CTO</option>
-                        <option value="Marketing Manager">Marketing Manager</option>
-                        <option value="Brand Manager">Brand Manager</option>
-                        <option value="Media Planner">Media Planner</option>
-                        <option value="Account Manager">Account Manager</option>
-                        <option value="Other">Other</option>
-                      </select>
-                      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  </div>
-
-                  {/* Email Address */}
-                  <div>
-                    <label className="block font-satoshi mb-3 text-base font-medium ">
-                      Email Address
-                    </label>
-                    <div className="relative">
-                      <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6" />
-                      <input
-                        type="email"
-                        placeholder="Enter your Email Address"
-                        value={profileData.email}
-                        onChange={(e) => handleProfileChange('email', e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 border border-[#EEEEEE] rounded-[0.625rem] focus:outline-none focus:border-brand"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Save Button */}
-                  <button
-                    onClick={handleProfileSubmit}
-                    className="w-full text-white text-lg font-satoshi font-bold py-5 bg-brand rounded-xl mt-3.5"
-                  >
-                    Save
-                  </button>
-                </div>
+                        {isRegistering || isSubmitting ? <Loader /> : 'Save'}
+                      </button>
+                    </Form>
+                  )}
+                </Formik>
               </>
             )}
           </div>

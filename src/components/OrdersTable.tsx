@@ -1,17 +1,47 @@
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+'use client';
 
-const orders = [
-  {
-    id: 1,
-    inquiryId: "JVF9380G5",
-    duration: "3 - 6 Months",
-    total: "0 AED",
-    status: "Pending",
-  },
-  // Add more orders as needed
-];
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import { useGetOrderListQuery } from "@/store/campaignApi";
+import Loader from "./Loader";
 
 export default function OrdersTable() {
+  const { data, isLoading, error } = useGetOrderListQuery();
+
+  // Map API response to table format
+  const orders = data?.orders?.map((order) => ({
+    id: order.order_id,
+    inquiryId: order.order_id,
+    duration: order.orders_duration,
+    total: `${order.order_amount} AED`,
+    status: order.order_status,
+  })) || [];
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex items-center justify-center py-12">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (error || data?.status === 'failed') {
+    return (
+      <div className="w-full flex items-center justify-center py-12">
+        <p className="text-[#6B7280] text-base font-satoshi">
+          {data?.msg || 'Failed to load orders. Please try again later.'}
+        </p>
+      </div>
+    );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="w-full flex items-center justify-center py-12">
+        <p className="text-[#6B7280] text-base font-satoshi">No orders found.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
       {/* Desktop Table */}

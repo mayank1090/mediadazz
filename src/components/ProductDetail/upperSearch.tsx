@@ -1,79 +1,111 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { LuSearch } from 'react-icons/lu'
-
+import { useRouter } from 'next/navigation'
 import { FiChevronRight } from "react-icons/fi"
 import { FaCar } from "react-icons/fa"
-import billboard from "../../../public/billboard.jpg"
 import Image from 'next/image'
 import { GoPlus } from "react-icons/go";
 import { FaCartShopping } from "react-icons/fa6";
-
-const mockSuggestions = [
-  {
-    type: "Billboards",
-    title: "Rd to King Al Azab, Dubai",
-    cars: "5,000,000",
-    image: billboard,
-    action: true,
-  },
-  {
-    type: "Billboards",
-    title: "Rd to Shammari Al Azab, Dubai",
-    cars: "9,000,000",
-    image: billboard,
-    action: true,
-  },
-  {
-    type: "Billboards",
-    title: "Rd to King Al Aya, Dubai",
-    cars: "2,000,000",
-    image: billboard,
-    action: true,
-  },
-  {
-    type: "Billboards",
-    title: "Sharjah Bus Stand, Dubai",
-    cars: "8,000,000",
-    image: billboard,
-    action: true,
-  },
-  {
-    type: "Audience",
-    title: "Sports Enthusiasts",
-    subtitle: "Audience Category",
-    image: billboard,
-    action: false,
-  },
-  {
-    type: "Location",
-    title: "Sports City",
-    subtitle: "Location",
-    image: "",
-    action: false,
-  },
-  {
-    type: "Media",
-    title: "Mall Advertising",
-    subtitle: "Media Type",
-    image: billboard,
-    action: false,
-  },
-]
+import { useLazySearchProductsQuery, useAddToCartMutation } from '@/store/productApi'
+import { toast } from 'react-toastify'
 
 const UpperSearch = () => {
+  const router = useRouter()
   const [query, setQuery] = useState("")
+  const [debouncedQuery, setDebouncedQuery] = useState("")
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [mobileTop, setMobileTop] = useState<number>(0)
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
+  
+  const [searchProducts, { data: searchData, isLoading: isSearching, error: searchError }] = useLazySearchProductsQuery()
+  const [addToCart] = useAddToCartMutation()
 
-  const filtered = query
-    ? mockSuggestions.filter(s =>
-        s.title.toLowerCase().includes(query.toLowerCase())
-      )
-    : []
+  // Debounce search query
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    debounceTimerRef.current = setTimeout(() => {
+      setDebouncedQuery(query)
+    }, 300) // 300ms debounce delay
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [query])
+
+  // Trigger search when debounced query changes
+  useEffect(() => {
+    if (debouncedQuery.trim().length > 0) {
+      searchProducts(debouncedQuery)
+    }
+  }, [debouncedQuery, searchProducts])
+
+  const products = searchData?.products_list || []
+  const filtered = query.trim().length > 0 ? products : []
+
+  const handleAddToCart = useCallback(async (e: React.MouseEvent, productId: string) => {
+    e.stopPropagation()
+    
+    if (!productId) {
+      toast.error('Product ID is required', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    try {
+      const result = await addToCart({ product_id: productId }).unwrap();
+      
+      if (result.status === 'true') {
+        toast.success(result.msg || 'Item added to cart', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        toast.error(result.msg || 'Failed to add item to cart', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error: any) {
+      const errorMessage = error?.data?.msg || error?.message || 'Failed to add item to cart';
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }
+  }, [addToCart])
+
+  const handleProductClick = useCallback((slug: string) => {
+    router.push(`/productdetail/${slug}`)
+    setShowSuggestions(false)
+    setQuery("")
+  }, [router])
 
   // Determine if viewport is mobile (Tailwind 'sm' breakpoint ~640px)
   useEffect(() => {
@@ -147,7 +179,7 @@ const UpperSearch = () => {
             autoComplete="off"
           />
           {/* Suggestions Dropdown */}
-          {showSuggestions && filtered.length > 0 && (
+          {showSuggestions && (
             <>
               {/* Mobile: fixed overlay attached under the input; background scroll locked */}
               {isMobile && (
@@ -163,51 +195,60 @@ const UpperSearch = () => {
                     style={{ top: mobileTop, bottom: 0 }}
                   >
                     <div className="py-2 h-full overflow-y-auto">
-                      {filtered.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center px-4 py-3 hover:bg-[#F9FAFB] transition cursor-pointer border-b last:border-b-0 border-[#F3F4F6]"
-                        >
-                          {item.image ? (
-                            <Image
-                              src={item.image}
-                              alt={item.title}
-                              className="w-24 h-16 rounded-lg object-cover mr-5"
-                            />
-                          ) : item.type === "Location" ? (
-                            <span className="w-24 h-16 flex items-center justify-center rounded-lg bg-[#FFF3ED] mr-5">
-                              <svg width="24" height="24" fill="#FF7A1A" viewBox="0 0 24 24"><path d="M12 2C7.03 2 3 6.03 3 11c0 5.25 7.05 10.74 8.09 11.51.56.41 1.26.41 1.82 0C13.95 21.74 21 16.25 21 11c0-4.97-4.03-9-9-9zm0 17.88C10.14 18.09 5 13.97 5 11c0-3.87 3.13-7 7-7s7 3.13 7 7c0 2.97-5.14 7.09-7 8.88z"/><circle cx="12" cy="11" r="2.5"/></svg>
-                            </span>
-                          ) : (
-                            <span className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F3F4F6] mr-4"></span>
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className={`text-xs font-satoshi font-medium ${item.type === "Billboards" ? "text-brand" : "text-gray-500"}`}>
-                                {item.type === "Billboards" ? "Billboards" : item.type === "Audience" ? "" : ""}
-                              </span>
-                            </div>
-                            <div className="font-bold text-base pt-1 font-satoshi  truncate">{item.title}</div>
-                            {item.cars && (
-                              <div className="flex items-center gap-1 text-xs text-[#6B7280] mt-1">
-                                <FaCar className="w-4 h-4 text-black" />
-                                <span>{item.cars} cars/ day</span>
-                              </div>
-                            )}
-                            {item.subtitle && (
-                              <div className="text-sm text-gray-400">{item.subtitle}</div>
-                            )}
-                          </div>
-                          {item.action ? (
-                            <button className="px-3 hidden sm:flex py-2.5 text-white rounded-lg bg-brand items-center gap-0.5 ">
-                             <GoPlus className="w-4 h-4 text-white"/>
-                             <FaCartShopping className="w-5 h-5 text-white"/>
-                            </button>
-                          ) : (
-                            <FiChevronRight className="ml-4 w-6 h-6 text-gray-400" />
-                          )}
+                      {isSearching && query.trim().length > 0 ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="text-sm text-gray-500 font-satoshi">Searching...</div>
                         </div>
-                      ))}
+                      ) : searchError ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="text-sm text-red-500 font-satoshi">Error loading results</div>
+                        </div>
+                      ) : filtered.length > 0 ? (
+                        filtered.map((item) => (
+                          <div
+                            key={item.product_id}
+                            onClick={() => handleProductClick(item.product_slug_url)}
+                            className="flex items-center px-4 py-3 hover:bg-[#F9FAFB] transition cursor-pointer border-b last:border-b-0 border-[#F3F4F6]"
+                          >
+                            {item.productimg ? (
+                              <Image
+                                src={item.productimg}
+                                alt={item.product_name}
+                                width={96}
+                                height={64}
+                                className="w-24 h-16 rounded-lg object-cover mr-5"
+                              />
+                            ) : (
+                              <span className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F3F4F6] mr-4"></span>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className={`text-xs font-satoshi font-medium text-brand`}>
+                                  {item.subcategories_name || item.categories_name}
+                                </span>
+                              </div>
+                              <div className="font-bold text-base pt-1 font-satoshi truncate">{item.product_name}</div>
+                              {item.products_reach_count && item.product_reach_type && item.product_reach_duration && (
+                                <div className="flex items-center gap-1 text-xs text-[#6B7280] mt-1">
+                                  <FaCar className="w-4 h-4 text-black" />
+                                  <span>{item.products_reach_count} {item.product_reach_type.toLowerCase()}/ {item.product_reach_duration}</span>
+                                </div>
+                              )}
+                            </div>
+                            <button 
+                              onClick={(e) => handleAddToCart(e, item.product_id)}
+                              className="px-3 hidden sm:flex py-2.5 text-white rounded-lg bg-brand items-center gap-0.5"
+                            >
+                              <GoPlus className="w-4 h-4 text-white"/>
+                              <FaCartShopping className="w-5 h-5 text-white"/>
+                            </button>
+                          </div>
+                        ))
+                      ) : query.trim().length > 0 ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="text-sm text-gray-500 font-satoshi">No results found</div>
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -216,51 +257,60 @@ const UpperSearch = () => {
               {/* Desktop/Tablet: absolute dropdown under input */}
               {!isMobile && (
                 <div className="absolute left-0 top-[110%] w-full z-30 rounded-2xl bg-white shadow-2xl border border-[#EEEEEE] py-2 max-h-[420px] overflow-y-auto">
-                  {filtered.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center px-4 py-3 hover:bg-[#F9FAFB] transition cursor-pointer border-b last:border-b-0 border-[#F3F4F6]"
-                    >
-                      {item.image ? (
-                        <Image
-                          src={item.image}
-                          alt={item.title}
-                          className="w-24 h-16 rounded-lg object-cover mr-5"
-                        />
-                      ) : item.type === "Location" ? (
-                        <span className="w-24 h-16 flex items-center justify-center rounded-lg bg-[#FFF3ED] mr-5">
-                          <svg width="24" height="24" fill="#FF7A1A" viewBox="0 0 24 24"><path d="M12 2C7.03 2 3 6.03 3 11c0 5.25 7.05 10.74 8.09 11.51.56.41 1.26.41 1.82 0C13.95 21.74 21 16.25 21 11c0-4.97-4.03-9-9-9zm0 17.88C10.14 18.09 5 13.97 5 11c0-3.87 3.13-7 7-7s7 3.13 7 7c0 2.97-5.14 7.09-7 8.88z"/><circle cx="12" cy="11" r="2.5"/></svg>
-                        </span>
-                      ) : (
-                        <span className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F3F4F6] mr-4"></span>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className={`text-xs font-satoshi font-medium ${item.type === "Billboards" ? "text-brand" : "text-gray-500"}`}>
-                            {item.type === "Billboards" ? "Billboards" : item.type === "Audience" ? "" : ""}
-                          </span>
-                        </div>
-                        <div className="font-bold text-base pt-1 font-satoshi  truncate">{item.title}</div>
-                        {item.cars && (
-                          <div className="flex items-center gap-1 text-xs text-[#6B7280] mt-1">
-                            <FaCar className="w-4 h-4 text-black" />
-                            <span>{item.cars} cars/ day</span>
-                          </div>
-                        )}
-                        {item.subtitle && (
-                          <div className="text-sm text-gray-400">{item.subtitle}</div>
-                        )}
-                      </div>
-                      {item.action ? (
-                        <button className="px-3 hidden sm:flex py-2.5 text-white rounded-lg bg-brand items-center gap-0.5 ">
-                         <GoPlus className="w-4 h-4 text-white"/>
-                         <FaCartShopping className="w-5 h-5 text-white"/>
-                        </button>
-                      ) : (
-                        <FiChevronRight className="ml-4 w-6 h-6 text-gray-400" />
-                      )}
+                  {isSearching && query.trim().length > 0 ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-sm text-gray-500 font-satoshi">Searching...</div>
                     </div>
-                  ))}
+                  ) : searchError ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-sm text-red-500 font-satoshi">Error loading results</div>
+                    </div>
+                  ) : filtered.length > 0 ? (
+                    filtered.map((item) => (
+                      <div
+                        key={item.product_id}
+                        onClick={() => handleProductClick(item.product_slug_url)}
+                        className="flex items-center px-4 py-3 hover:bg-[#F9FAFB] transition cursor-pointer border-b last:border-b-0 border-[#F3F4F6]"
+                      >
+                        {item.productimg ? (
+                          <Image
+                            src={item.productimg}
+                            alt={item.product_name}
+                            width={96}
+                            height={64}
+                            className="w-24 h-16 rounded-lg object-cover mr-5"
+                          />
+                        ) : (
+                          <span className="w-12 h-12 flex items-center justify-center rounded-lg bg-[#F3F4F6] mr-4"></span>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-satoshi font-medium text-brand`}>
+                              {item.subcategories_name || item.categories_name}
+                            </span>
+                          </div>
+                          <div className="font-bold text-base pt-1 font-satoshi truncate">{item.product_name}</div>
+                          {item.products_reach_count && item.product_reach_type && item.product_reach_duration && (
+                            <div className="flex items-center gap-1 text-xs text-[#6B7280] mt-1">
+                              <FaCar className="w-4 h-4 text-black" />
+                              <span>{item.products_reach_count} {item.product_reach_type.toLowerCase()}/ {item.product_reach_duration}</span>
+                            </div>
+                          )}
+                        </div>
+                        <button 
+                          onClick={(e) => handleAddToCart(e, item.product_id)}
+                          className="px-3  hidden sm:flex py-2.5 ml-3 text-white rounded-lg bg-brand items-center gap-0.5"
+                        >
+                          <GoPlus className="w-4 h-4 text-white"/>
+                          <FaCartShopping className="w-5 h-5 text-white"/>
+                        </button>
+                      </div>
+                    ))
+                  ) : query.trim().length > 0 ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-sm text-gray-500 font-satoshi">No results found</div>
+                    </div>
+                  ) : null}
                 </div>
               )}
             </>
@@ -268,12 +318,26 @@ const UpperSearch = () => {
         </div>
         <button
           type="submit"
+          onClick={(e) => {
+            e.preventDefault()
+            if (query.trim().length > 0) {
+              searchProducts(query)
+              setShowSuggestions(true)
+            }
+          }}
           className="rounded-xl hidden md:block whitespace-nowrap font-satoshi bg-white text-brand px-5 py-[1.125rem] text-pretty text-xl font-bold  border border-brand hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform"
         >
           Search
         </button>
         <button
           type="submit"
+          onClick={(e) => {
+            e.preventDefault()
+            if (query.trim().length > 0) {
+              searchProducts(query)
+              setShowSuggestions(true)
+            }
+          }}
           className="rounded-xl md:hidden whitespace-nowrap font-satoshi bg-brand py-4 px-[1.125rem] text-pretty text-xl font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500"
         >
           <LuSearch className=" text-white h-5 w-5"/>

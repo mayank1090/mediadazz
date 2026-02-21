@@ -32,7 +32,7 @@ export default function Home() {
     <BillboardCarousel />
     <MediaServices />
     <CustomerWorld/>
-    <FeatureListing/>
+    <FeatureListing listings={[]}/>
     <MarketersSection/>
     <MediaAdvantage/>
     <FAQ/>
