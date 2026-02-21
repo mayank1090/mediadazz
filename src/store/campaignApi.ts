@@ -28,7 +28,7 @@ export interface GetOrderListResponse {
 }
 
 export interface PlanCampaignResponse {
-  status: string;
+  status: boolean;
   msg?: string;
   campaign_id?: string;
   // Add other fields returned by your API if needed
