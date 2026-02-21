@@ -39,7 +39,7 @@ const Pointstoconsider = ({ isLoggedIn, pointsToConsider = [] }: Pointstoconside
             <div key={index} className={`p-6 ${index < points.length - 1 ? 'border-b border-[#EEEEEE]' : ''} flex items-center gap-2.5`}>
               <FaArrowRightLong className="text-brand w-6 shrink-0" />
               <h4 className="font-medium font-satoshi text-base">
-                {point}
+                {typeof point === 'string' || typeof point === 'number' ? point : null}
               </h4>
             </div>
           ))}

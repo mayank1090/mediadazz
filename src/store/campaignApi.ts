@@ -27,11 +27,18 @@ export interface GetOrderListResponse {
   orders?: Order[];
 }
 
+export interface PlanCampaignResponse {
+  status: boolean;
+  msg?: string;
+  campaign_id?: string;
+  // Add other fields returned by your API if needed
+}
+
 export const campaignApi = createApi({
   reducerPath: 'campaignApi',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (builder) => ({
-    planCampaign: builder.mutation<any, FormData>({
+    planCampaign: builder.mutation<PlanCampaignResponse, FormData>({
       query: (formData) => ({
         url: 'plan_campaign',
         method: 'POST',

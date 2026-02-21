@@ -7,35 +7,35 @@ export const authApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   tagTypes: ['Wishlist'],
   endpoints: (builder) => ({
-    userLogin: builder.mutation<any, FormData>({
+    userLogin: builder.mutation<{ status: string; msg: string; token?: string }, FormData>({
       query: (formData) => ({
         url: 'userlogin',
         method: 'POST',
         body: formData,
       }),
     }),
-    verifyOtp: builder.mutation<any, FormData>({
+    verifyOtp: builder.mutation<{ status: string; msg: string; token?: string }, FormData>({
       query: (formData) => ({
         url: 'verifyotp',
         method: 'POST',
         body: formData,
       }),
     }),
-    userRegister: builder.mutation<any, FormData>({
+    userRegister: builder.mutation<{ status: string; msg: string; token?: string }, FormData>({
       query: (formData) => ({
         url: 'userregister',
         method: 'POST',
         body: formData,
       }),
     }),
-    getUserDetails: builder.mutation<any, FormData>({
+    getUserDetails: builder.mutation<{ status: string; msg: string; user?: Record<string, unknown> }, FormData>({
       query: (formData) => ({
         url: 'getuserdetails',
         method: 'POST',
         body: formData,
       }),
     }),
-    updateUserDetails: builder.mutation<any, FormData>({
+    updateUserDetails: builder.mutation<{ status: string; msg: string }, FormData>({
       query: (formData) => ({
         url: 'updateuserdetails',
         method: 'POST',

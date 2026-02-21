@@ -33,6 +33,8 @@ export interface ListingItem {
   };
   listing_latitude: number | null;
   listing_longitude: number | null;
+  listing_product_id?: string;
+  is_wishlist?: boolean; // Optional field to indicate if the item is in the wishlist
 }
 
 export interface SubCategory {

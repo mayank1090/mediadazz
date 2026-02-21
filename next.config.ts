@@ -4,7 +4,6 @@ const isProd = process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
   // Enable static optimization only in production
-  output: isProd ? 'export' : undefined,
   trailingSlash: true,
   
   // Image optimization
