@@ -2,7 +2,14 @@ import React from 'react'
 import Tvicon from "../../../public/TV.svg"
 import Image from 'next/image'
 
-const Uppergrid = () => {
+interface UppergridProps {
+  displayType?: string;
+  location?: string;
+  reach?: string;
+  size?: string;
+}
+
+const Uppergrid = ({ displayType, location, reach, size }: UppergridProps) => {
   return (
     <div className='grid grid-cols-2 bg-white rounded-[0.75rem] lg:rounded-[0.875rem] overflow-hidden border border-[#EEEEEE]'>
       <div className="p-1.5 lg:p-2 border border-[rgb(238,238,238)] flex items-center gap-2.5 lg:gap-3.5">
@@ -11,7 +18,7 @@ const Uppergrid = () => {
        </div>
        <div className="">
         <p className="text-[0.625rem] font-satoshi md:text-sm text-[#6B7280] font-medium lg:text-base ">Display</p>
-        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">LED</h3>
+        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">{displayType || 'N/A'}</h3>
        </div>
       </div>
       <div className="p-1.5 lg:p-2 border border-[#EEEEEE] flex items-center gap-2.5 lg:gap-3.5">
@@ -20,7 +27,7 @@ const Uppergrid = () => {
        </div>
        <div className="">
         <p className="text-[0.625rem] font-satoshi md:text-sm text-[#6B7280] font-medium lg:text-base ">Location</p>
-        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">Deira, Dubai</h3>
+        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">{location || 'N/A'}</h3>
        </div>
       </div>
       <div className="p-1.5 lg:p-2 border border-[#EEEEEE] flex items-center gap-2.5 lg:gap-3.5">
@@ -29,7 +36,11 @@ const Uppergrid = () => {
        </div>
        <div className="">
         <p className="text-[0.625rem] font-satoshi md:text-sm text-[#6B7280] lg:text-base font-medium ">Reach</p>
-        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">150,000 / <span className='font-medium text-[#6B7280]'>Foot Traffic </span></h3>
+        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">{reach ? (
+          <>
+            {reach.split(' / ')[0]} / <span className='font-medium text-[#6B7280]'>{reach.split(' / ')[1] || 'N/A'}</span>
+          </>
+        ) : 'N/A'}</h3>
        </div>
       </div>
       <div className="p-1.5 lg:p-2 border border-[#EEEEEE] flex items-center gap-2.5 lg:gap-3.5">
@@ -38,7 +49,7 @@ const Uppergrid = () => {
        </div>
        <div className="">
         <p className="text-[0.625rem] font-satoshi md:text-sm text-[#6B7280] font-medium lg:text-base ">Size</p>
-        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">16 X 9 m2</h3>
+        <h3 className="pt-1 lg:pt-1.5 font-satoshi font-bold text-xs md:text-base lg:text-lg">{size || 'N/A'}</h3>
        </div>
       </div>
       

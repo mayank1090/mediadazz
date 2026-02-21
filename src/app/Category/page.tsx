@@ -225,7 +225,7 @@ export default function CategoryPage () {
 
        <ImageCarousel/>
        <div className="flex gap-12 mt-12">
-        <div className="max-w-[25%] shrink-0 hidden md:block"><Filteroptions/></div>
+        <div className="max-w-[25%] shrink-0 hidden md:block"><Filteroptions category_name="outdoor-ooh-media" category_type="category"/></div>
         <div className="flex-1">
           <h4 className="font-medium text-base font-satoshi text-[#6B7280] mb-8">Showing 1 - 24 of 556 Spaces</h4>
          <div className="hidden lg:block"> <CategoryCatalogue/></div>
@@ -340,7 +340,7 @@ export default function CategoryPage () {
                                 </span>
                               </p>
                             </div>
-                            <CartButton setCartOpen={setCartOpen} />
+                            <CartButton product_id={l.id?.toString() || ""} />
                           </div>
                         </div>
                       </div>
@@ -373,7 +373,7 @@ export default function CategoryPage () {
         </button>
       </div>
       <div className="overflow-y-auto h-[calc(100vh-4rem)] px-4 pb-8">
-        <Filteroptions />
+        <Filteroptions category_name="outdoor-ooh-media" category_type="category"/>
       </div>
     </div>
   </div>

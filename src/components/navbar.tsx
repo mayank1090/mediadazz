@@ -17,10 +17,13 @@ import {
 import CountrySelector from "./CountrySelector";
 import LoginModal from "./LoginModal";
 import { MenuItem, MenuSection, TopLevel } from "../types/navbar";
-import NavLogo from "../images/navlogo";
+import NavLogo from "../../public/navLogo.svg";
 import Dummyuser from "../../public/Dummyuser.png";
 import cart from "../../public/cart.svg";
 import { useRouter } from "next/navigation";
+import MediaCartModal from "./MediaCartModal";
+import { useGetCartDataQuery, productApi } from "@/store/productApi";
+import { useDispatch } from "react-redux";
 
 type Props = {
   topLevels: TopLevel[];
@@ -36,17 +39,29 @@ export default function SidebarMegaMenu({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const dispatch = useDispatch();
+  
+  // Fetch cart data to show item count - only when user is logged in
+  const { data: cartData } = useGetCartDataQuery(undefined, {
+    skip: !isLoggedIn, // Skip query when user is not logged in
+  });
+  const cartItemCount = isLoggedIn ? (cartData?.cartdata?.length || 0) : 0;
 
   // Check user login status from localStorage
   useEffect(() => {
     const checkLoginStatus = () => {
-      const userActive = localStorage.getItem("useractive");
-      setIsLoggedIn(userActive === "true");
+      const userLoggedIn = localStorage.getItem("auth_token");
+      setIsLoggedIn(userLoggedIn !== null);
+      // If user logged out, reset productApi cache to clear cart data
+      if (!userLoggedIn) {
+        dispatch(productApi.util.resetApiState());
+      }
     };
 
     checkLoginStatus();
@@ -57,6 +72,10 @@ export default function SidebarMegaMenu({
     // Listen for custom login status change events (from same tab)
     const handleLoginStatusChange = (event: CustomEvent) => {
       setIsLoggedIn(event.detail.isLoggedIn);
+      // If user logged out, reset productApi cache to clear cart data
+      if (!event.detail.isLoggedIn) {
+        dispatch(productApi.util.resetApiState());
+      }
     };
 
     window.addEventListener(
@@ -71,7 +90,7 @@ export default function SidebarMegaMenu({
         handleLoginStatusChange as EventListener
       );
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -124,6 +143,10 @@ export default function SidebarMegaMenu({
 
   const handleLogout = () => {
     localStorage.removeItem("useractive");
+    localStorage.removeItem("auth_token");
+
+    // Invalidate RTK Query cache for cart data
+    dispatch(productApi.util.resetApiState());
 
     // Dispatch custom event to notify other components of logout
     window.dispatchEvent(
@@ -134,6 +157,7 @@ export default function SidebarMegaMenu({
 
     setIsLoggedIn(false);
     setProfileDropdownOpen(false);
+    router.push("/");
     // You can add additional logout logic here (API calls, redirects, etc.)
   };
 
@@ -161,7 +185,7 @@ export default function SidebarMegaMenu({
               className="h-6 lg:h-7 max-w-[80%] lg:max-w-full"
               aria-label="Go to homepage"
             >
-              <NavLogo className="h-full w-full" />
+              <Image src={NavLogo} alt='NavLogo' className="h-full w-full" />
             </Link>
           </div>
           <div className="flex items-center gap-7">
@@ -198,17 +222,20 @@ export default function SidebarMegaMenu({
                       role="menu"
                       className="absolute left-0 overflow-y-auto  max-h-[60vh] top-full w-screen mt-3 max-w-full rounded-[0.875rem] border border-[#EEEEEE] bg-neutral-50 shadow-[0px_4px_24px_0px_rgba(0,0,0,0.1)]"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8">
+                      <div className="grid grid-cols-1 gap-8 p-8">
                         {t.sections.map((sec) => (
                           <div key={sec.heading} className="min-w-0">
-                            <h3 onClick={()=>router.push("/Category")} className="text-sm xl:text-base font-medium cursor-pointer font-satoshi text-brand uppercase mb-6">
+                            <h3 
+                              onClick={() => sec.slug && router.push(`/${sec.slug}`)} 
+                              className={`text-sm xl:text-base font-medium font-satoshi text-brand uppercase mb-6 ${sec.slug ? 'cursor-pointer' : ''}`}
+                            >
                               {sec.heading}
                             </h3>
-                            <ul className="space-y-6">
+                            <ul className="grid grid-cols-3 gap-x-6 gap-y-4">
                               {sec.items.map((item) => (
                                 <li key={item.label}>
                                   <Link
-                                  href={"/subcategory"}
+                                  href={item.slug ? `/${sec.slug}/${item.slug}` : item.href || '#'}
                                     className="block text-xs xl:text-sm text-neutral-800 hover:text-brand"
                                     onClick={() => 
                                       setClickedIndex(null)}
@@ -229,8 +256,9 @@ export default function SidebarMegaMenu({
 
             <div className=" flex items-center gap-3">
               <Link
-                href={cartHref}
-                className="inline-flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full border border-[#EEEEEE] text-black hover:bg-neutral-100"
+              href="#"
+              onClick={() => setCartOpen(true)}
+                className="relative inline-flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full border border-[#EEEEEE] text-black hover:bg-neutral-100"
                 aria-label="Cart"
               >
                 <Image
@@ -238,6 +266,11 @@ export default function SidebarMegaMenu({
                   alt="cart"
                   className=" h-5 w-5 md:h-6 md:w-6"
                 />
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-5 w-5 md:h-6 md:w-6 items-center justify-center rounded-full bg-brand text-white text-xs md:text-sm font-bold font-satoshi">
+                    {cartItemCount > 99 ? '99+' : cartItemCount}
+                  </span>
+                )}
               </Link>
 
               {!isLoggedIn ? (
@@ -272,7 +305,7 @@ export default function SidebarMegaMenu({
                         Personal Details
                       </Link>
                       <Link
-                        href="/profile"
+                        href="/profile/wishlist"
                         className="flex items-center gap-2.5 px-[0.875rem] py-3 text-base font-medium "
                         onClick={() => setProfileDropdownOpen(false)}
                       >
@@ -370,7 +403,7 @@ export default function SidebarMegaMenu({
                     Personal Details
                   </Link>
                   <Link
-                    href="/profile"
+                    href="/profile/wishlist"
                     className="flex items-center gap-3 px-3.5 py-3 text-sm text-neutral-800 hover:bg-gray-50 rounded-lg"
                     onClick={() => setMobileOpen(false)}
                   >
@@ -411,14 +444,17 @@ export default function SidebarMegaMenu({
                         key={index}
                         className="mt-6 px-3.5 bg-white last:mb-6"
                       >
-                        <h3 onClick={()=>router.push("/Category")}  className="text-[11px] font-semibold tracking-wide text-brand uppercase mb-2">
+                        <h3 
+                          onClick={() => sec.slug && router.push(`/${sec.slug}`)} 
+                          className={`text-[11px] font-semibold tracking-wide text-brand uppercase mb-2 ${sec.slug ? 'cursor-pointer' : ''}`}
+                        >
                           {sec.heading}
                         </h3>
                         <ul className="space-y-2">
                           {sec.items.map((item, index) => (
                             <li key={index}>
                               <Link
-                                href={"/subcategory"}
+                                href={item.slug ? `/${item.slug}` : item.href || '#'}
                                 className="block text-sm text-neutral-800"
                                 onClick={() => setMobileOpen(false)}
                               >
@@ -445,6 +481,7 @@ export default function SidebarMegaMenu({
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
       />
+      <MediaCartModal open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 }

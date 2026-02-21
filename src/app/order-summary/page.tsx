@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { PiMoneyWavy } from "react-icons/pi";
 import { FaRegHeart } from "react-icons/fa";
@@ -15,32 +15,56 @@ import { IoMdCart } from "react-icons/io";
 import { FaPlus } from "react-icons/fa";    
 import { IoPricetagOutline } from "react-icons/io5";
 import InquiryReceivedModal from "@/components/InquiryReceivedModal";
+import { useGetCartDataQuery, useUpdateCartMutation, usePlaceOrderMutation } from "@/store/productApi";
+import type { CartItem } from "@/store/productApi";
 
-const cartItems = [
-    {
-        id: 1,
-        image: "/first.svg",
-        category: "Billboards",
-        title: "LED Unipole on Deira Al Maktoum Bridge Road Maktoum Bridge to Deira City Center route",
-        location: "Dubai - Deira",
-        price: "Price on Request",
-    },
-    {
-        id: 2,
-        image: "/first.svg",
-        category: "Billboards",
-        title: "Three double-sided billboards on Sheikh Zayed Road",
-        location: "Dubai - Deira",
-        price: "Price on Request",
-    },
-];
+// Helper function to format date to "January 05, 2026" format
+const formatDateForAPI = (date: Date): string => {
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    const month = months[date.getMonth()];
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month} ${day}, ${year}`;
+};
+
+// Helper function to parse date from API format or create from string
+const parseDateFromAPI = (dateString: string | null): Date | null => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? null : date;
+};
 
 export default function OrderSummaryPage() {
-    const [selectedDates, setSelectedDates] = useState<{ [key: number]: Date[] }>({});
+    const { data: cartData, isLoading, error, refetch } = useGetCartDataQuery();
+    const [updateCart] = useUpdateCartMutation();
+    const [placeOrder, { isLoading: isPlacingOrder }] = usePlaceOrderMutation();
+    
+    const cartItems: CartItem[] = cartData?.cartdata || [];
+    
+    // Initialize selectedDates from API data
+    const [selectedDates, setSelectedDates] = useState<{ [key: string]: Date[] }>({});
     const [planning, setPlanning] = useState("");
     const [budget, setBudget] = useState("");
     const [needCreative, setNeedCreative] = useState(false);
-    const [showInquiryModal, setShowInquiryModal] = useState(false); // <-- Add this
+    const [showInquiryModal, setShowInquiryModal] = useState(false);
+    
+    // Initialize dates from API response
+    useEffect(() => {
+        if (cartItems.length > 0) {
+            const initialDates: { [key: string]: Date[] } = {};
+            cartItems.forEach((item) => {
+                const startDate = parseDateFromAPI(item.product_startdate);
+                const endDate = parseDateFromAPI(item.product_enddate);
+                if (startDate && endDate) {
+                    initialDates[item.product_id] = [startDate, endDate];
+                }
+            });
+            setSelectedDates(initialDates);
+        }
+    }, [cartItems]);
 
     return (
         <div className="bg-[#FAFAFA] p-6 md:py-7 lg:px-24 xl:px-[7.75rem] mt-[5.5rem] lg:mt-28">
@@ -55,90 +79,171 @@ export default function OrderSummaryPage() {
                         <p className="font-satoshi text-xs md:text-sm text-[#6B7280] font-medium">Order Summary</p>
                     </div>
                     <h2 className="font-satoshi font-bold text-2xl  mb-1.5 mt-8">Order Summary</h2>
-                    <span className="text-[#6B7280] text-base font-satoshi mb-5 lg:mb-8 block">{cartItems.length} AdSpace</span>
+                    <span className="text-[#6B7280] text-base font-satoshi mb-5 lg:mb-8 block">
+                        {isLoading ? "Loading..." : `${cartItems.length} AdSpace`}
+                    </span>
                     <div className="rounded-lg flex-1  no-scrollbar ">
-                        {cartItems.map((item, index) => (
-                            <div
-                                key={index}
-                                className="p-2.5 bg-white border-b border-[#EEEEEE] last:border-b-0"
-                            >
-                                <div className="bg-white rounded-lg cursor-pointer flex xl:flex-row flex-col ">
-                                    <div className="w-full shrink-0 xl:max-w-[25%] relative overflow-hidden ">
-                                        <Image
-                                            src={item.image}
-                                            alt="Featured listing"
-                                            width={300} // or your preferred width
-                                            height={200} // or your preferred height
-                                            className="w-full h-full max-h-[200px] object-cover rounded-lg object-center"
-                                        />
-                                    </div>
-                                    <div className="flex-1 p-3.5 flex flex-col justify-center">
-                                        <div className="flex flex-col gap-2.5">
-                                            <h4 className="font-satoshi font-medium text-sm text-brand">{item.category}</h4>
-                                            <h3 className="font-satoshi font-bold text-lg  lg:text-xl ">{item.title}</h3>
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-12">
+                                <span className="text-[#6B7280] font-satoshi">Loading cart items...</span>
+                            </div>
+                        ) : error || cartData?.status === "false" ? (
+                            <div className="flex items-center justify-center py-12">
+                                <span className="text-[#6B7280] font-satoshi">
+                                    {cartData?.msg || "Please login to get cart data"}
+                                </span>
+                            </div>
+                        ) : cartItems.length === 0 ? (
+                            <div className="flex items-center justify-center py-12">
+                                <span className="text-[#6B7280] font-satoshi">Your cart is empty</span>
+                            </div>
+                        ) : (
+                            cartItems.map((item, index) => (
+                                <div
+                                    key={item.product_id}
+                                    className="p-2.5 bg-white border-b border-[#EEEEEE] last:border-b-0"
+                                >
+                                    <div className="bg-white rounded-lg cursor-pointer flex xl:flex-row flex-col ">
+                                        <div className="w-full shrink-0 xl:max-w-[25%] relative overflow-hidden ">
+                                            <Image
+                                                src={item.product_img}
+                                                alt={item.product_catename}
+                                                width={300}
+                                                height={200}
+                                                className="w-full h-full max-h-[200px] object-cover rounded-lg object-center"
+                                            />
                                         </div>
+                                        <div className="flex-1 p-3.5 flex flex-col justify-center">
+                                            <div className="flex flex-col gap-2.5">
+                                                <h4 className="font-satoshi font-medium text-sm text-brand">{item.product_catename}</h4>
+                                                <h3 className="font-satoshi font-bold text-lg  lg:text-xl ">{item.product_name}</h3>
+                                            </div>
                                             <div className="flex items-center gap-2.5 mt-4">
                                                 <SlLocationPin className="w-4 h-4 text-brand" />
-                                                <span className="font-medium text-sm font-satoshi">{item.location}</span>
+                                                <span className="font-medium text-sm font-satoshi">{item.product_city} - {item.product_locality}</span>
                                             </div>
                                             <div className="lg:hidden mt-[1.125rem]">
-                                                 <Calendar
-                                                selectedDates={selectedDates[item.id] || []}
-                                                onChange={(dates: Date[]) => setSelectedDates(prev => ({
-                                                    ...prev,
-                                                    [item.id]: dates
-                                                }))}
-                                                 onApplyAll={(dates: Date[]) => {
-                                                    // Apply to all cart items
-                                                    const all: { [key: number]: Date[] } = {};
-                                                    cartItems.forEach(item => {
-                                                      all[item.id] = dates;
-                                                    });
-                                                    setSelectedDates(all);
-                                                  }}
-                                            />
+                                                <Calendar
+                                                    selectedDates={selectedDates[item.product_id] || []}
+                                                    onChange={async (dates: Date[]) => {
+                                                        setSelectedDates(prev => ({
+                                                            ...prev,
+                                                            [item.product_id]: dates
+                                                        }));
+                                                        
+                                                        // Update cart via API
+                                                        if (dates.length === 2 && dates[0] && dates[1]) {
+                                                            try {
+                                                                await updateCart({
+                                                                    product_id: item.product_id,
+                                                                    startdate: formatDateForAPI(dates[0]),
+                                                                    enddate: formatDateForAPI(dates[1]),
+                                                                }).unwrap();
+                                                            } catch (error) {
+                                                                console.error('Failed to update cart:', error);
+                                                            }
+                                                        }
+                                                    }}
+                                                    onApplyAll={async (dates: Date[]) => {
+                                                        // Apply to all cart items
+                                                        const all: { [key: string]: Date[] } = {};
+                                                        cartItems.forEach(cartItem => {
+                                                            all[cartItem.product_id] = dates;
+                                                        });
+                                                        setSelectedDates(all);
+                                                        
+                                                        // Update all items via API
+                                                        if (dates.length === 2 && dates[0] && dates[1]) {
+                                                            const updatePromises = cartItems.map(cartItem =>
+                                                                updateCart({
+                                                                    product_id: cartItem.product_id,
+                                                                    startdate: formatDateForAPI(dates[0]),
+                                                                    enddate: formatDateForAPI(dates[1]),
+                                                                }).unwrap()
+                                                            );
+                                                            try {
+                                                                await Promise.all(updatePromises);
+                                                            } catch (error) {
+                                                                console.error('Failed to update cart items:', error);
+                                                            }
+                                                        }
+                                                    }}
+                                                />
                                             </div>
 
-                                        <div className="flex justify-between items-center gap-6 mt-[1.125rem]">
-                                              
-                                            <div className="flex items-center gap-3.5">
-                                                <div className="hidden lg:block">
-                                                 <Calendar
-                                                selectedDates={selectedDates[item.id] || []}
-                                                onChange={(dates: Date[]) => setSelectedDates(prev => ({
-                                                    ...prev,
-                                                    [item.id]: dates
-                                                }))}
-                                                onApplyAll={(dates: Date[]) => {
-                                                    // Apply to all cart items
-                                                    const all: { [key: number]: Date[] } = {};
-                                                    cartItems.forEach(item => {
-                                                      all[item.id] = dates;
-                                                    });
-                                                    setSelectedDates(all);
-                                                  }}
-                                            />
-                                            </div>
-                                            <div className="flex gap-2 items-center">
-                                                <IoPricetagsOutline className="w-[1.125rem] h-[1.125rem]" />
-                                                <p className="text-sm font-medium font-satoshi">Price on Request</p>
-                                            </div>
-                                           
-                                            </div>
-                                            <div className="flex items-center gap-3.5">
-                                                <div className="p-2.5 rounded-full border border-[#EEEEEE]">
-                                                    <CiHeart className="w-5 h-5 cursor-pointer text-[#6B7280] hover:text-red-600 transition" />
+                                            <div className="flex justify-between items-center gap-6 mt-[1.125rem]">
+                                                <div className="flex items-center gap-3.5">
+                                                    <div className="hidden lg:block">
+                                                        <Calendar
+                                                            selectedDates={selectedDates[item.product_id] || []}
+                                                            onChange={async (dates: Date[]) => {
+                                                                setSelectedDates(prev => ({
+                                                                    ...prev,
+                                                                    [item.product_id]: dates
+                                                                }));
+                                                                
+                                                                // Update cart via API
+                                                                if (dates.length === 2 && dates[0] && dates[1]) {
+                                                                    try {
+                                                                        await updateCart({
+                                                                            product_id: item.product_id,
+                                                                            startdate: formatDateForAPI(dates[0]),
+                                                                            enddate: formatDateForAPI(dates[1]),
+                                                                        }).unwrap();
+                                                                    } catch (error) {
+                                                                        console.error('Failed to update cart:', error);
+                                                                    }
+                                                                }
+                                                            }}
+                                                            onApplyAll={async (dates: Date[]) => {
+                                                                // Apply to all cart items
+                                                                const all: { [key: string]: Date[] } = {};
+                                                                cartItems.forEach(cartItem => {
+                                                                    all[cartItem.product_id] = dates;
+                                                                });
+                                                                setSelectedDates(all);
+                                                                
+                                                                // Update all items via API
+                                                                if (dates.length === 2 && dates[0] && dates[1]) {
+                                                                    const updatePromises = cartItems.map(cartItem =>
+                                                                        updateCart({
+                                                                            product_id: cartItem.product_id,
+                                                                            startdate: formatDateForAPI(dates[0]),
+                                                                            enddate: formatDateForAPI(dates[1]),
+                                                                        }).unwrap()
+                                                                    );
+                                                                    try {
+                                                                        await Promise.all(updatePromises);
+                                                                    } catch (error) {
+                                                                        console.error('Failed to update cart items:', error);
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex gap-2 items-center">
+                                                        <IoPricetagsOutline className="w-[1.125rem] h-[1.125rem]" />
+                                                        <p className="text-sm font-medium font-satoshi">
+                                                            {item.product_priceonrequest === "Yes" || item.product_price === 0 
+                                                                ? "Price on Request" 
+                                                                : `${item.product_price} AED`}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div className="p-2.5 rounded-lg bg-[#FEE2E2]">
-                                                <IoTrashOutline className="w-5 h-5 cursor-pointer text-[#EF4444]" />
+                                                <div className="flex items-center gap-3.5">
+                                                    <div className="p-2.5 rounded-full border border-[#EEEEEE]">
+                                                        <CiHeart className={`w-5 h-5 cursor-pointer transition ${item.wishlist ? 'text-red-600' : 'text-[#6B7280] hover:text-red-600'}`} />
+                                                    </div>
+                                                    <div className="p-2.5 rounded-lg bg-[#FEE2E2]">
+                                                        <IoTrashOutline className="w-5 h-5 cursor-pointer text-[#EF4444]" />
+                                                    </div>
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
                 {/* Right: Summary */}
@@ -194,10 +299,38 @@ export default function OrderSummaryPage() {
                     </div>
                     {/* Desktop Submit Inquiry Button */}
                     <button
-                        className="w-full md:block hidden bg-brand text-white font-bold font-satoshi text-lg rounded-xl py-4"
-                        onClick={() => setShowInquiryModal(true)}
+                        className="w-full md:block hidden bg-brand text-white font-bold font-satoshi text-lg rounded-xl py-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={async () => {
+                            try {
+                                // Map planning to duration format
+                                let duration: string | undefined;
+                                if (planning === "Less than 3 Months") {
+                                    duration = "1 to 3 months";
+                                } else if (planning === "3 - 6 Months") {
+                                    duration = "3 to 6 months";
+                                } else if (planning === "6 - 9 Months") {
+                                    duration = "6 to 9 months";
+                                } else if (planning === "9 - 12 Months") {
+                                    duration = "9 to 12 months";
+                                }
+                                
+                                const estimatedamount = budget ? parseInt(budget) : undefined;
+                                
+                                await placeOrder({
+                                    duration,
+                                    estimatedamount,
+                                    creativecheck: needCreative,
+                                }).unwrap();
+                                
+                                setShowInquiryModal(true);
+                            } catch (error) {
+                                console.error('Failed to place order:', error);
+                                alert('Failed to submit inquiry. Please try again.');
+                            }
+                        }}
+                        disabled={isPlacingOrder || cartItems.length === 0}
                     >
-                        Submit Inquiry
+                        {isPlacingOrder ? "Submitting..." : "Submit Inquiry"}
                     </button>
                     <p className="text-sm font-medium text-[#6B7280] px-5 py-4">
                         MediaDazz adheres to the highest standards of client data and information protection. To Know more, read our <a href="#" className="underline text-black">Privacy Policy</a> here.
@@ -218,10 +351,38 @@ export default function OrderSummaryPage() {
                         <span className="font-satoshi font-bold text-base">0 AED</span>
                     </div>
               <button
-                        className="px-[1.125rem] flex-1 lg:flex-none  text-white cursor-pointer py-3 sm:py-4 bg-brand rounded-lg text-base xl:text-xl font-satoshi font-bold mx-auto justify-center hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg flex items-center  hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform gap-2.5"
-                        onClick={() => setShowInquiryModal(true)}
+                        className="px-[1.125rem] flex-1 lg:flex-none  text-white cursor-pointer py-3 sm:py-4 bg-brand rounded-lg text-base xl:text-xl font-satoshi font-bold mx-auto justify-center hover:md:bg-gradient-to-r hover:md:from-orange-600 hover:md:to-orange-700 hover:md:shadow-lg flex items-center  hover:md:shadow-orange-500/25 hover:md:scale-[1.02]  outline-none  transition-all duration-300 ease-in-out transform gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        onClick={async () => {
+                            try {
+                                // Map planning to duration format
+                                let duration: string | undefined;
+                                if (planning === "Less than 3 Months") {
+                                    duration = "1 to 3 months";
+                                } else if (planning === "3 - 6 Months") {
+                                    duration = "3 to 6 months";
+                                } else if (planning === "6 - 9 Months") {
+                                    duration = "6 to 9 months";
+                                } else if (planning === "9 - 12 Months") {
+                                    duration = "9 to 12 months";
+                                }
+                                
+                                const estimatedamount = budget ? parseInt(budget) : undefined;
+                                
+                                await placeOrder({
+                                    duration,
+                                    estimatedamount,
+                                    creativecheck: needCreative,
+                                }).unwrap();
+                                
+                                setShowInquiryModal(true);
+                            } catch (error) {
+                                console.error('Failed to place order:', error);
+                                alert('Failed to submit inquiry. Please try again.');
+                            }
+                        }}
+                        disabled={isPlacingOrder || cartItems.length === 0}
                     >
-                        Submit Inquiry
+                        {isPlacingOrder ? "Submitting..." : "Submit Inquiry"}
                     </button>
             </div>
           </div>

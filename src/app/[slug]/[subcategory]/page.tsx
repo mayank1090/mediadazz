@@ -6,7 +6,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { IoChevronUpOutline } from "react-icons/io5";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import Image from 'next/image';
-import outdoor from "../../../public/billboard.jpg"
+import outdoor from "../../../../public/billboard.jpg"
 import React from 'react';
 import { ImageCarousel } from '@/components/Category/ImageCarousel';
 import Filteroptions from '@/components/Category/Filteroptions';
@@ -15,7 +15,7 @@ import Listingcarousel from '@/components/listingcarousel';
 import UpperSearch from '@/components/ProductDetail/upperSearch';
 import Pagination from '@/components/Category/Pagination';
 import { useGetCategoryQuery } from '@/store/categoryApi';
-import { useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
  const sortOptions = [
     'Featured',
@@ -26,10 +26,19 @@ import { useSearchParams } from 'next/navigation';
     'Rating'
   ];
 
+  // Helper function to decode HTML entities
+  const decodeHtmlEntities = (text: string | undefined): string => {
+    if (!text) return '';
+    if (typeof window === 'undefined') return text; // SSR safety
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+  };
+
 const SubCategory = () => {
-  const searchParams = useSearchParams();
-  const categoryName = searchParams?.get('category') || 'outdoor-ooh-media'; // Default to 'outdoor-ooh-media' or get from URL
-  const subcategoryName = searchParams?.get('subcategory') || 'billboards'; // Default subcategory name
+  const params = useParams();
+  const categoryName = (params?.slug as string) || 'outdoor-ooh-media'; // Get category from URL path segment
+  const subcategoryName = (params?.subcategory as string) || 'billboards'; // Get subcategory from URL path segment
 
      const [isDropdownOpen, setIsDropdownOpen] = useState(false);
       const [selectedSort, setSelectedSort] = useState('Featured');
@@ -187,7 +196,7 @@ const SubCategory = () => {
        <div className="flex gap-8 items-center mt-8 lg:flex-row flex-col">
         <div className=" w-full lg:w-[20%] shrink-0">
         <Image 
-          src={categoryData?.sub_category_details?.sub_category_image || outdoor} 
+          src={categoryData?.sub_category_image || categoryData?.sub_category_details?.sub_category_image || outdoor} 
           alt='outdoor' 
           className=' h-full w-full object-cover object-center rounded-lg '
           width={400}
@@ -195,11 +204,12 @@ const SubCategory = () => {
         />
         </div>
         <div className="">
-            <h4 className="font-bold font-satoshi text-2xl ">Explore billboards in Dubai</h4>
-            <h6 className="font-satoshi text-base pt-1.5 font-medium text-[#6B7280]">Dubai’s skyline is more than just an architectural marvel. It is also a showcase of some of the most powerful brands in the world. At MediaDazz, the UAE’s largest media marketplace, you can add your preferred billboards to your media plan and get the best prices for your selection. 
-<br/>
-<br/>
-<span className='text-black'>Browse our collection of billboards in Dubai from the listings below.</span></h6>
+            <h4 className="font-bold font-satoshi text-2xl ">
+              {decodeHtmlEntities(categoryData?.heading || categoryData?.sub_category_details?.heading)}
+            </h4>
+            <h6 className="font-satoshi text-base pt-1.5 font-medium text-[#6B7280]">
+              {decodeHtmlEntities(categoryData?.sub_heading || categoryData?.sub_category_details?.sub_heading)}
+            </h6>
         </div>
        </div>
        <div className="flex gap-12 mt-12">

@@ -1,3 +1,4 @@
+'use client';
 import NavLogo from "../../public/footerLogo.svg";
 import { FaLinkedinIn } from "react-icons/fa6";
 import { AiFillInstagram } from "react-icons/ai";
@@ -6,8 +7,10 @@ import { CiLocationOn } from "react-icons/ci";
 import { IoCallOutline } from "react-icons/io5";
 import { FaArrowUp } from "react-icons/fa";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Footer (){
+    const router = useRouter();
     return<>
     <div className="px-6 py-11 lg:py-[5.25rem] bg-black lg:px-24 xl:px-[7.5rem]">
         <div className="flex flex-col gap-8 lg:gap-28 md:flex-row justify-between">
@@ -48,25 +51,22 @@ export default function Footer (){
             <div className="grid grid-cols-2 gap-16 lg:gap-[5.25rem]">
                 <div className="space-y-[1.125rem] lg:space-y-6">
                     <h4 className="font-medium font-satoshi text-xs lg:text-base text-white uppercase">Categories</h4>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Outdoor & OOH Media</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Print Media</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">FM Radio</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">TV Channels</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Social Media</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Events</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">PR</p>
-                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Direct</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/campaigns')}>Plan a Campaign</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/joinmediadazz')}>Join MediaDazz</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/list-your-media')} >List Your Media</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/outdoor-ooh-media')}>Outdoor & OOH Media</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/print-media')}>Print Media</p>
+                    <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/fm-radio')}>FM Radio</p>
                 </div>
                 <div className="space-y-[1.125rem] lg:space-y-6">
                 <h4 className="font-medium font-satoshi text-xs lg:text-base text-white uppercase">GET TO KNOW US</h4>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer  ">Privacy Policy</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Help Center</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Blogs</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Benefits</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">FAQs</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Careers</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Login</p>
-                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer ">Sign Up</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/aboutus')}>About Us</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/mediadazz-blog')}>MediaDazz Blog</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/privacy-policy')}>Privacy Policy</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/terms-of-use')}>Terms of Use</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/careers')}>Careers</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('https://development.mediadazz.com/api/sitemap')}>Sitemap</p>
+                <p className="text-[#FAFAFAB2] font-medium font-satoshi text-xs lg:text-base cursor-pointer " onClick={()=>router.push('/contact-us')}>Contact Us</p>
                 </div>
             </div>
 

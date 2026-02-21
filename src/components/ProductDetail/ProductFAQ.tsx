@@ -2,14 +2,27 @@
 "use client"
 import { useState } from "react";
 import { CiCircleQuestion } from "react-icons/ci";
-import { faqData } from '../FAQ';
 import { IoAdd, IoRemove } from 'react-icons/io5';
 
-export const ProductFAQ = () => {
-    const [openItem, setOpenItem] = useState<number>(1);
+interface FAQItem {
+  faq_question: string;
+  faq_answer: string;
+}
+
+interface ProductFAQProps {
+  faqList?: FAQItem[];
+}
+
+export const ProductFAQ = ({ faqList = [] }: ProductFAQProps) => {
+    const [openItem, setOpenItem] = useState<number | null>(null);
     const toggleItem = (id: number) => {
-        setOpenItem(openItem === id ? -1 : id);
+        setOpenItem(openItem === id ? null : id);
       };
+      
+  if (!faqList || faqList.length === 0) {
+    return null;
+  }
+  
   return (
     <div>
         <h2 className="gap-3.5 flex items-center text-2xl font-bold font-satoshi ">
@@ -21,12 +34,12 @@ export const ProductFAQ = () => {
       <h2 id="faq-heading" className="sr-only">Frequently Asked Questions</h2>
       
       <div className="space-y-3 ">
-        {faqData.map((item) => {
-          const isOpen = openItem === item.id;
+        {faqList.map((item, index) => {
+          const isOpen = openItem === index;
           
           return (
             <div
-              key={item.id}
+              key={index}
               
               className={`rounded-xl border p-4 border-[#EEEEEE] transition-all duration-300 ease-in-out ${
                 isOpen 
@@ -35,14 +48,14 @@ export const ProductFAQ = () => {
               }`}
             >
               <button
-                onClick={() => toggleItem(item.id)}
+                onClick={() => toggleItem(index)}
                 className={`w-full text-left cursor-pointer flex items-center gap-3 transition-colors duration-200 ${
                   isOpen 
                     ? 'text-brand' 
                     : 'text-black'
                 }`}
                 aria-expanded={isOpen}
-                aria-controls={`faq-answer-${item.id}`}
+                aria-controls={`faq-answer-${index}`}
               >
                 <div className={`flex-shrink-0 rounded-md overflow-hidden ${isOpen?'bg-[#F3F3F5]':"bg-white"}  h-8 w-8 p-1.5`}>
                   {isOpen ? (
@@ -51,12 +64,12 @@ export const ProductFAQ = () => {
                     <IoAdd className="w-full h-full text-black " aria-hidden="true" />
                   )}
                 </div>
-                <span className="font-bold text-base font-satoshi">{item.question}</span>
+                <span className="font-bold text-base font-satoshi">{item.faq_question}</span>
                 
               </button>
               
               <div
-                id={`faq-answer-${item.id}`}
+                id={`faq-answer-${index}`}
                 className={`overflow-hidden mt-3 transition-all duration-300 ease-in-out ${
                   isOpen 
                     ? 'block opacity-100' 
@@ -65,8 +78,8 @@ export const ProductFAQ = () => {
                 aria-hidden={!isOpen}
               >
                 <div className="">
-                  <p className="text-black font-satoshi font-medium text-base">
-                    {item.answer}
+                  <p className="text-black font-satoshi font-medium text-base whitespace-pre-line">
+                    {item.faq_answer}
                   </p>
                 </div>
               </div>

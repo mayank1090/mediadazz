@@ -13,7 +13,7 @@ export default function MarketersSection (){
         <h2 className="font-satoshi mt-2.5 font-bold text-[2rem] lg:text-4xl xl:text-5xl leading-[2.625rem]">Our Favorite Deals This Week</h2>
         <p className="font-satoshi lg:text-xl xl:text-[1.375rem] font-medium text-base text-[#6B7280]">Discover top ad spots with special offers—curated for maximum reach at the best value.</p>
         </div>
-        <div className="grid grid-cols-3 mt-16 gap-6 lg:min-h-450px  xl:min-h-[540px] ">
+        <div className="grid grid-cols-3 mt-16 gap-6 lg:min-h-[480px]  xl:min-h-[540px] ">
             <div className="relative rounded-[0.875rem] overflow-hidden">
                 <Image className="object-cover object-center h-full w-full" src={marketone} alt="marketone"/>
                 <div className="absolute lg:top-[10%] xl:top-[15%] w-full">
