@@ -223,13 +223,10 @@ export default function CategoryPage () {
         </div>
         </div>
 
-       <ImageCarousel/>
        <div className="flex gap-12 mt-12">
         <div className="max-w-[25%] shrink-0 hidden md:block"><Filteroptions category_name="outdoor-ooh-media" category_type="category"/></div>
         <div className="flex-1">
           <h4 className="font-medium text-base font-satoshi text-[#6B7280] mb-8">Showing 1 - 24 of 556 Spaces</h4>
-         <div className="hidden lg:block"> <CategoryCatalogue/></div>
-         <div className="lg:hidden"><Listingcarousel/></div>
         </div>
        </div>
     </div>
