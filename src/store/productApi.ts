@@ -43,7 +43,7 @@ export interface FAQItem {
 
 export interface TargetAudienceItem {
   audience?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface PointsToConsiderItem {
@@ -51,7 +51,7 @@ export interface PointsToConsiderItem {
   point?: string;
   title?: string;
   description?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface MediaDazzInsight {
@@ -120,7 +120,7 @@ export interface CartItem {
   product_city: string;
   product_locality: string;
   wishlist: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface GetCartDataResponse {

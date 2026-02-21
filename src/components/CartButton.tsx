@@ -64,8 +64,8 @@ export default function CartButton({
           draggable: true,
         });
       }
-    } catch (error: any) {
-      const errorMessage = error?.data?.msg || error?.message || 'Failed to add item to cart';
+    } catch (error: unknown) {
+      const errorMessage = (error as { data?: { msg?: string }; message?: string })?.data?.msg || (error as { message?: string })?.message || 'Failed to add item to cart';
       toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,

@@ -91,16 +91,17 @@ export default function Planyourcampaign() {
               fd.append('estimated_budget', values.estimated_budget);
               fd.append('special_requirements', values.special_requirements || '');
 
-              const res: any = await planCampaign(fd).unwrap();
+              const res = await planCampaign(fd).unwrap() as { status?: boolean; msg?: string };
               if (res?.status === true) {
                 toast.success(res.msg || 'Campaign submitted successfully');
                 resetForm();
               } else {
                 toast.error(res?.msg || 'Failed to submit campaign');
               }
-            } catch (err: any) {
+            } catch (err: unknown) {
               console.error('planCampaign error', err);
-              toast.error(err?.data?.msg || 'Network error while submitting campaign');
+              const errorMessage = (err as { data?: { msg?: string } })?.data?.msg || 'Network error while submitting campaign';
+              toast.error(errorMessage);
             } finally {
               setSubmitting(false);
             }
@@ -141,7 +142,7 @@ export default function Planyourcampaign() {
                   Mobile No.
                 </label>
                 <Field name="mobile">
-                  {({ form }: any) => (
+                  {({ form }: { form: { setFieldValue: (field: string, value: string) => void } }) => (
                     <div className="flex border border-[#EEEEEE] rounded-[0.625rem]">
                       <select
                         value={countryCode}
@@ -290,7 +291,7 @@ export default function Planyourcampaign() {
                 </label>
                 <div className="flex flex-col px-4 py-4 rounded-lg border border-[#EEEEEE]">
                   <Field name="campaign_start_duration">
-                    {({ field, form }: any) => {
+                    {({ field, form }: { field: { value: string }; form: { values: { campaign_end_duration?: string }; setFieldValue: (field: string, value: string) => void } }) => {
                       // Helper to format date as YYYY-MM-DD in local time
                       function formatLocalDate(date: Date) {
                         const year = date.getFullYear();
@@ -322,7 +323,7 @@ export default function Planyourcampaign() {
                                   endDate: endDate || new Date(),
                                   key: 'selection',
                                 }]}
-                                onChange={(ranges: any) => {
+                                onChange={(ranges: { selection: { startDate: Date; endDate: Date } }) => {
                                   form.setFieldValue('campaign_start_duration', formatLocalDate(ranges.selection.startDate));
                                   form.setFieldValue('campaign_end_duration', formatLocalDate(ranges.selection.endDate));
                                 }}

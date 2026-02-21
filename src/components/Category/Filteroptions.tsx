@@ -92,14 +92,14 @@ const Filteroptions = ({
       // Special handling for subcategory
       if (key === 'subcategory') {
         filterItems = value
-          .filter((item: any) => item.subcategories_status === 'Active')
-          .map((item: any) => ({
+          .filter((item: { subcategories_status?: string }) => item.subcategories_status === 'Active')
+          .map((item: { subcategories_name: string; subcategories_urlslug: string }) => ({
             display: item.subcategories_name,
             value: item.subcategories_urlslug
           }))
       } else {
         // For all other filters, use name/value structure
-        filterItems = value.map((item: any) => {
+        filterItems = value.map((item: { name?: string; value?: string }) => {
           // Check if item has name and value properties
           if (item.name && item.value) {
             return {

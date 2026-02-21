@@ -3,7 +3,7 @@ import { PiTarget } from "react-icons/pi";
 
 interface TargetAudienceItem {
   audience?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface TargetAudienceProps {

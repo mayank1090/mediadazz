@@ -85,7 +85,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       fd.append('countrycode', countryCode);
       fd.append('mobile', phoneNumber);
 
-      const res: any = await sendOtp(fd).unwrap();
+      const res = await sendOtp(fd).unwrap() as { status?: string; msg?: string };
 
       if (res?.status === 'success') {
         setStep('otp');
@@ -93,9 +93,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       } else {
         toast.error(res?.msg || 'Failed to send OTP', { position: 'top-right' });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('sendOtp error', err);
-      toast.error(err?.data?.msg || 'Network error while sending OTP', { position: 'top-right' });
+      const errorMessage = (err as { data?: { msg?: string } })?.data?.msg || 'Network error while sending OTP';
+      toast.error(errorMessage, { position: 'top-right' });
     }
   };
 
@@ -195,7 +196,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       fd.append('countrycode', countryCode);
       fd.append('mobile', phoneNumber);
 
-      const res: any = await sendOtp(fd).unwrap();
+      const res = await sendOtp(fd).unwrap() as { status?: string; msg?: string };
 
       if (res?.status === 'success') {
         // Reset OTP fields when resending
@@ -205,9 +206,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       } else {
         toast.error(res?.msg || 'Failed to resend OTP', { position: 'top-right' });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('resendOtp error', err);
-      toast.error(err?.data?.msg || 'Network error while resending OTP', { position: 'top-right' });
+      const errorMessage = (err as { data?: { msg?: string } })?.data?.msg || 'Network error while resending OTP';
+      toast.error(errorMessage, { position: 'top-right' });
     }
   };
 
@@ -230,7 +232,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       fd.append('email', values.email);
       fd.append('token', localStorage.getItem('auth_token') || '');
 
-      const res: any = await registerUser(fd).unwrap();
+      const res = await registerUser(fd).unwrap() as { status?: string; msg?: string };
 
       if (res?.status === 'success') {
         localStorage.setItem('useractive', 'true');
@@ -240,9 +242,10 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       } else {
         toast.error(res?.msg || 'Registration failed', { position: 'top-right' });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('registerUser error', err);
-      toast.error(err?.data?.msg || 'Network error while registering', { position: 'top-right' });
+      const errorMessage = (err as { data?: { msg?: string } })?.data?.msg || 'Network error while registering';
+      toast.error(errorMessage, { position: 'top-right' });
     }
   };
 
@@ -261,7 +264,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
       fd.append('mobile', phoneNumber);
       fd.append('otp', currentOtp.join(''));
 
-      const res: any = await verifyOtp(fd).unwrap();
+      const res = await verifyOtp(fd).unwrap() as { status?: string; msg?: string; token?: string; userdata?: { status?: boolean } };
 
       setIsVerifying(false);
 
@@ -290,11 +293,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         setOtpError(true);
         toast.error(res?.msg || 'Invalid OTP. Please try again.', { position: 'top-right' });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsVerifying(false);
       setOtpError(true);
       console.error('verifyOtp error', err);
-      toast.error(err?.data?.msg || 'Network error while verifying OTP', { position: 'top-right' });
+      const errorMessage = (err as { data?: { msg?: string } })?.data?.msg || 'Network error while verifying OTP';
+      toast.error(errorMessage, { position: 'top-right' });
     }
   };
 

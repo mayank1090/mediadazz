@@ -100,7 +100,7 @@ export default function ProfilePageContent() {
 				const fd = new FormData();
 				fd.append('token', token);
 
-				const res: any = await getUserDetails(fd).unwrap();
+				const res = await getUserDetails(fd).unwrap() as { status?: string; data?: UserData; msg?: string };
 
 				if (res?.status === 'success' && res?.data) {
 					const data = res.data;
@@ -124,9 +124,10 @@ export default function ProfilePageContent() {
 				} else {
 					toast.error(res?.msg || 'Failed to fetch user details', { position: 'top-right' });
 				}
-			} catch (err: any) {
+			} catch (err: unknown) {
 				console.error('getUserDetails error', err);
-				toast.error(err?.data?.msg || 'Network error while fetching user details', { position: 'top-right' });
+				const errorMessage = (err as { data?: { msg?: string } })?.data?.msg || 'Network error while fetching user details';
+				toast.error(errorMessage, { position: 'top-right' });
 			} finally {
 				setIsLoading(false);
 			}
@@ -172,7 +173,7 @@ export default function ProfilePageContent() {
 			fd.append('company_name', values.companyName);
 			fd.append('designation', values.designation);
 
-			const res: any = await updateUserDetails(fd).unwrap();
+			const res = await updateUserDetails(fd).unwrap() as { status?: string; msg?: string; data?: UserData };
 
 			if (res?.status === 'success') {
 				toast.success(res?.msg || 'Profile updated successfully!', { position: 'top-right' });
@@ -185,9 +186,10 @@ export default function ProfilePageContent() {
 			} else {
 				toast.error(res?.msg || 'Failed to update profile', { position: 'top-right' });
 			}
-		} catch (err: any) {
+		} catch (err: unknown) {
 			console.error('updateUserDetails error', err);
-			toast.error(err?.data?.msg || 'Network error while updating profile', { position: 'top-right' });
+			const errorMessage = (err as { data?: { msg?: string } })?.data?.msg || 'Network error while updating profile';
+			toast.error(errorMessage, { position: 'top-right' });
 		}
 	};
 

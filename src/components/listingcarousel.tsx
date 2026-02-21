@@ -27,7 +27,7 @@ export type Listing = {
 
 interface ListingcarouselProps {
   city?: string;
-  listings?: Listing[];
+  listings?: Listing[] | ListingItem[];
 }
 
 const Listingcarousel = ({ city, listings: propListings }: ListingcarouselProps) => {
@@ -47,16 +47,21 @@ const Listingcarousel = ({ city, listings: propListings }: ListingcarouselProps)
   useEffect(() => {
     // Priority 1: Use listings from props (category API)
     if (propListings && propListings.length > 0) {
-      const convertedListings: Listing[] = propListings.map((item: any) => ({
-        product_name: item.product_name || item.listing_title || "",
-        product_price: item.product_price || "Price on request",
-        categories_name: item.categories_name || item.listing_category || "",
-        products_reach_count: item.products_reach_count || item.listing_list?.reach_count || "",
-        product_reach_type: item.product_reach_type || item.listing_list?.reach_type || "",
-        productimg: item.productimg || item.listing_image || "/first.svg",
-        product_url: item.product_url || item.listing_url || "",
-        feature_list: item.feature_list || [],
-      }));
+      const convertedListings: Listing[] = propListings.map((item) => {
+        const itemUnknown = item as unknown;
+        const listingItem = itemUnknown as ListingItem;
+        const listing = itemUnknown as Listing;
+        return {
+          product_name: listing.product_name || listingItem.listing_title || "",
+          product_price: listing.product_price || "Price on request",
+          categories_name: listing.categories_name || listingItem.listing_category || "",
+          products_reach_count: listing.products_reach_count || listingItem.listing_list?.reach_count || "",
+          product_reach_type: listing.product_reach_type || listingItem.listing_list?.reach_type || "",
+          productimg: listing.productimg || listingItem.listing_image || "/first.svg",
+          product_url: listing.product_url || listingItem.listing_url || "",
+          feature_list: listing.feature_list || [],
+        };
+      });
       setListings(convertedListings);
       return;
     }
