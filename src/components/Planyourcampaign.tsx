@@ -326,8 +326,12 @@ export default function Planyourcampaign() {
                                 onChange={(rangesByKey: RangeKeyDict) => {
                                   const selection = rangesByKey.selection;
                                   if (selection) {
-                                    form.setFieldValue('campaign_start_duration', formatLocalDate(selection.startDate));
-                                    form.setFieldValue('campaign_end_duration', formatLocalDate(selection.endDate));
+                                    if (selection.startDate) {
+                                      form.setFieldValue('campaign_start_duration', formatLocalDate(selection.startDate));
+                                    }
+                                    if (selection.endDate) {
+                                      form.setFieldValue('campaign_end_duration', formatLocalDate(selection.endDate));
+                                    }
                                   }
                                 }}
                                 moveRangeOnFirstSelection={false}
